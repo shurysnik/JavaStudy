@@ -39,6 +39,26 @@ public class AutoService {
         return result;
     }
 
+    public Auto update(Auto auto) {
+        auto = new Auto(
+                "Model-" + 1,
+                BigDecimal.ONE,
+                Manufacturer.MAZDA,
+                RacingTires.SLICKS,
+                "Model-" + 1);
+        AUTO_REPOSITORY.update(auto);
+        LOGGER.info("New Auto {}",auto);
+        return auto;
+    }
+
+    public boolean delete(String auto) {
+           AUTO_REPOSITORY.delete(auto );
+        LOGGER.info("Delete Auto {}",auto);
+        return AUTO_REPOSITORY.delete(auto );
+    }
+    public boolean deleteAuto(Auto auto) {
+        return AUTO_REPOSITORY.deleteAuto(auto);
+    }
     private Manufacturer getRandomManufacturer() {
         final Manufacturer[] values = Manufacturer.values();
         final int index = RANDOM.nextInt(values.length);
@@ -53,13 +73,17 @@ public class AutoService {
 
 
     public void saveAutos(List<Auto> autos) {
-        AUTO_REPOSITORY.create(autos);
+        AUTO_REPOSITORY.createAll(autos);
     }
 
+    public void saveAuto(Auto auto) {
+        AUTO_REPOSITORY.create(auto);
+    }
 
     public void printAll() {
         for (Auto auto : AUTO_REPOSITORY.getAll()) {
-            LOGGER.info("written data {}", auto);
+            System.out.println(auto);
+            // LOGGER.info("written data {}", auto);
         }
     }
 

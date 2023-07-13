@@ -34,7 +34,7 @@ public class AutoRepository implements CrudRepository<Auto> {
     }
 
     @Override
-    public boolean create(List<Auto> auto) {
+    public boolean createAll(List<Auto> auto) {
         return autos.addAll(auto);
     }
 
@@ -51,6 +51,10 @@ public class AutoRepository implements CrudRepository<Auto> {
     @Override
     public boolean delete(String id) {
         return autos.removeIf(auto -> auto.getId().equals(id));
+    }
+    @Override
+    public boolean deleteAuto(Auto auto) {
+        return autos.remove(auto);
     }
 
     private static class AutoCopy {

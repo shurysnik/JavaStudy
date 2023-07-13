@@ -61,7 +61,7 @@ public class SportCarService {
 
 
     public void saveAutos(List<SportCar> sportCars) {
-        SPORT_CAR_REPOSITORY.create(sportCars);
+        SPORT_CAR_REPOSITORY.createAll(sportCars);
 
     }
 

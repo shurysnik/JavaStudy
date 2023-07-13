@@ -1,5 +1,7 @@
 package org.example.reprository;
 
+import org.example.model.Auto;
+
 import java.util.List;
 
 public interface CrudRepository<T> {
@@ -9,10 +11,11 @@ public interface CrudRepository<T> {
 
     boolean create(T auto);
 
-    boolean create(List<T> auto);
+    boolean createAll(List<T> auto);
 
     boolean update(T auto);
 
     boolean delete(String id);
 
+    boolean deleteAuto(T auto);
 }

@@ -1,5 +1,6 @@
 package org.example.reprository;
 
+import org.example.model.Auto;
 import org.example.model.CivilCar;
 
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
     }
 
     @Override
-    public boolean create(List<CivilCar> auto) {
+    public boolean createAll(List<CivilCar> auto) {
         return civilCars.addAll(auto);
     }
 
@@ -51,7 +52,10 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
     public boolean delete(String id) {
         return civilCars.removeIf(auto -> auto.getId().equals(id));
     }
-
+    @Override
+    public boolean deleteAuto(CivilCar auto) {
+        return civilCars.remove(auto);
+    }
     private static class CivilCarCopy {
         static void copy(CivilCar from, CivilCar to) {
             to.setFuelConsumption(from.getFuelConsumption());

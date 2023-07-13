@@ -71,7 +71,7 @@ public class CivilCarService {
     }
 
     public void saveAutos(List<CivilCar> civilCars) {
-        CIVIL_CAR_REPOSITORY.create(civilCars);
+        CIVIL_CAR_REPOSITORY.createAll(civilCars);
     }
 
     public void printAll() {
