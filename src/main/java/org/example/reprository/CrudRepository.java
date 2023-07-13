@@ -1,19 +1,17 @@
 package org.example.reprository;
 
-import org.example.model.Auto;
-
 import java.util.List;
 
-public interface CrudRepository {
-    Auto getById(String id);
+public interface CrudRepository<T> {
+    T getById(String id);
 
-    List<Auto> getAll();
+    List<T> getAll();
 
-    boolean create(Auto auto);
+    boolean create(T auto);
 
-    boolean create(List<Auto> auto);
+    boolean create(List<T> auto);
 
-    boolean update(Auto auto);
+    boolean update(T auto);
 
     boolean delete(String id);
 

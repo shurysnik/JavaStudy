@@ -2,11 +2,10 @@ package org.example.reprository;
 
 import org.example.model.Auto;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AutoRepository implements CrudRepository {
+public class AutoRepository implements CrudRepository<Auto> {
     private final List<Auto> autos;
 
     public AutoRepository() {
@@ -51,13 +50,7 @@ public class AutoRepository implements CrudRepository {
 
     @Override
     public boolean delete(String id) {
-        final Iterator<Auto> iterator = autos.iterator();
-        while (iterator.hasNext()) {
-            final Auto auto = iterator.next();
-            iterator.remove();
-            return true;
-        }
-        return false;
+        return autos.removeIf(auto -> auto.getId().equals(id));
     }
 
     private static class AutoCopy {
