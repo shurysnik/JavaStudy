@@ -1,6 +1,9 @@
 package org.example.service;
 
-import org.example.model.*;
+import org.example.model.CivilCar;
+import org.example.model.FuelType;
+import org.example.model.Manufacturer;
+import org.example.model.RacingTires;
 import org.example.reprository.CivilCarRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -51,10 +51,12 @@ public class SportCarRepository implements CrudRepository<SportCar> {
     public boolean delete(String id) {
         return sportCars.removeIf(sportCar -> sportCar.getId().equals(id));
     }
+
     @Override
     public boolean delete(SportCar sportCar) {
         return sportCars.remove(sportCar);
     }
+
     private static class SportCarCopy {
         static void copy(SportCar from, SportCar to) {
             to.setColor(from.getColor());
