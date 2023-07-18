@@ -17,9 +17,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         System.out.println("-".repeat(60) + "update" + "-".repeat(60));
-        Auto auto = new Auto("Model-" + 0, BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Model-" + 0);
+        Auto auto = new Auto("Model-0", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Model-0");
         AUTO_SERVICE.saveAuto(auto);
         Auto newAutoUpdate = AUTO_SERVICE.update(auto);
         AUTO_SERVICE.saveAuto(newAutoUpdate);

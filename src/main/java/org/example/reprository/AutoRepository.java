@@ -2,6 +2,8 @@ package org.example.reprository;
 
 import org.example.model.Auto;
 
+import java.math.BigDecimal;
+import java.util.IllformedLocaleException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,13 +30,22 @@ public class AutoRepository implements CrudRepository<Auto> {
     }
 
     @Override
-    public boolean create(Auto auto) {
+    public boolean save(Auto auto) {
+        if (auto == null) {
+            throw new IllegalArgumentException("Auto must not be null");
+        }
+        if (auto.getPrice().equals(BigDecimal.ZERO)) {
+            auto.setPrice(BigDecimal.valueOf(-1));
+        }
         return autos.add(auto);
 
     }
 
     @Override
-    public boolean createAll(List<Auto> auto) {
+    public boolean saveAll(List<Auto> auto) {
+        if (auto == null) {
+            return false;
+        }
         return autos.addAll(auto);
     }
 
@@ -48,12 +59,21 @@ public class AutoRepository implements CrudRepository<Auto> {
         return false;
     }
 
+    public boolean updateByBodyType(String bodyType,Auto copyFrom) {
+        for (Auto auto:autos) {
+            if (auto.getBodyType().equals(bodyType)){
+                AutoCopy.copy(copyFrom,auto);
+            }
+        }
+        return true;
+    }
     @Override
     public boolean delete(String id) {
         return autos.removeIf(auto -> auto.getId().equals(id));
     }
+
     @Override
-    public boolean deleteAuto(Auto auto) {
+    public boolean delete(Auto auto) {
         return autos.remove(auto);
     }
 
@@ -61,7 +81,7 @@ public class AutoRepository implements CrudRepository<Auto> {
         static void copy(Auto from, Auto to) {
             to.setModel(from.getModel());
             to.setBodyType(from.getBodyType());
-            to.setManufacturer(from.getManufacturer());
+         //   to.setManufacturer(from.getManufacturer());
             to.setPrice(from.getPrice());
         }
     }

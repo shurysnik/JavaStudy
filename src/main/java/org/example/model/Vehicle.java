@@ -22,6 +22,4 @@ public abstract class Vehicle {
         this.manufacturer = manufacturer;
         this.racingTires = racingTires;
     }
-
-
 }

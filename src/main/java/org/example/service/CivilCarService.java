@@ -71,12 +71,12 @@ public class CivilCarService {
     }
 
     public void saveAutos(List<CivilCar> civilCars) {
-        CIVIL_CAR_REPOSITORY.createAll(civilCars);
+        CIVIL_CAR_REPOSITORY.saveAll(civilCars);
     }
 
     public void printAll() {
         for (CivilCar civilCar : CIVIL_CAR_REPOSITORY.getAll()) {
-            LOGGER.info("written data {}", civilCar);
+            System.out.println(civilCar);
         }
     }
 }

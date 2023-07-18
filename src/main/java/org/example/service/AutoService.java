@@ -18,7 +18,6 @@ public class AutoService {
     private static final Random RANDOM = new Random();
     private static final AutoRepository AUTO_REPOSITORY = new AutoRepository();
 
-
     public List<Auto> createAuto(int count) {
         List<Auto> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
@@ -47,18 +46,20 @@ public class AutoService {
                 RacingTires.SLICKS,
                 "Model-" + 1);
         AUTO_REPOSITORY.update(auto);
-        LOGGER.info("New Auto {}",auto);
+        LOGGER.info("New Auto {}", auto);
         return auto;
     }
 
     public boolean delete(String auto) {
-           AUTO_REPOSITORY.delete(auto );
-        LOGGER.info("Delete Auto {}",auto);
-        return AUTO_REPOSITORY.delete(auto );
+        AUTO_REPOSITORY.delete(auto);
+        LOGGER.info("Delete Auto {}", auto);
+        return AUTO_REPOSITORY.delete(auto);
     }
+
     public boolean deleteAuto(Auto auto) {
-        return AUTO_REPOSITORY.deleteAuto(auto);
+        return AUTO_REPOSITORY.delete(auto);
     }
+
     private Manufacturer getRandomManufacturer() {
         final Manufacturer[] values = Manufacturer.values();
         final int index = RANDOM.nextInt(values.length);
@@ -71,20 +72,17 @@ public class AutoService {
         return values[index];
     }
 
-
     public void saveAutos(List<Auto> autos) {
-        AUTO_REPOSITORY.createAll(autos);
+        AUTO_REPOSITORY.saveAll(autos);
     }
 
     public void saveAuto(Auto auto) {
-        AUTO_REPOSITORY.create(auto);
+        AUTO_REPOSITORY.save(auto);
     }
 
     public void printAll() {
         for (Auto auto : AUTO_REPOSITORY.getAll()) {
             System.out.println(auto);
-            // LOGGER.info("written data {}", auto);
         }
     }
-
 }

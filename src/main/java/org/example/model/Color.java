@@ -1,5 +1,5 @@
 package org.example.model;
 
-public enum ColorSportCar {
+public enum Color {
     RED, WHITE, BLUE, BLACK, YELLOW
 }

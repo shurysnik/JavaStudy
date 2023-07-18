@@ -1,6 +1,5 @@
 package org.example.reprository;
 
-import org.example.model.Auto;
 import org.example.model.SportCar;
 
 import java.util.LinkedList;
@@ -29,13 +28,13 @@ public class SportCarRepository implements CrudRepository<SportCar> {
     }
 
     @Override
-    public boolean create(SportCar auto) {
-        return sportCars.add(auto);
+    public boolean save(SportCar sportCar) {
+        return sportCars.add(sportCar);
     }
 
     @Override
-    public boolean createAll(List<SportCar> auto) {
-        return sportCars.addAll(auto);
+    public boolean saveAll(List<SportCar> sportCar) {
+        return sportCars.addAll(sportCar);
     }
 
     @Override
@@ -53,12 +52,12 @@ public class SportCarRepository implements CrudRepository<SportCar> {
         return sportCars.removeIf(sportCar -> sportCar.getId().equals(id));
     }
     @Override
-    public boolean deleteAuto(SportCar auto) {
-        return sportCars.remove(auto);
+    public boolean delete(SportCar sportCar) {
+        return sportCars.remove(sportCar);
     }
     private static class SportCarCopy {
         static void copy(SportCar from, SportCar to) {
-            to.setColorSportCar(from.getColorSportCar());
+            to.setColor(from.getColor());
             to.setYear(from.getYear());
             to.setSpeed(from.getSpeed());
             to.setModel(from.getModel());

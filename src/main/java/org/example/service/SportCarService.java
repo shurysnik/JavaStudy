@@ -47,8 +47,8 @@ public class SportCarService {
         return values[index];
     }
 
-    private ColorSportCar getRandomColorSportCar() {
-        final ColorSportCar[] values = ColorSportCar.values();
+    private Color getRandomColorSportCar() {
+        final Color[] values = Color.values();
         final int index = RANDOM.nextInt(values.length);
         return values[index];
     }
@@ -61,13 +61,13 @@ public class SportCarService {
 
 
     public void saveAutos(List<SportCar> sportCars) {
-        SPORT_CAR_REPOSITORY.createAll(sportCars);
+        SPORT_CAR_REPOSITORY.saveAll(sportCars);
 
     }
 
     public void printAll() {
         for (SportCar sportCar : SPORT_CAR_REPOSITORY.getAll()) {
-            LOGGER.info("written data {}", sportCar);
+            System.out.println(sportCar);
         }
     }
 }
