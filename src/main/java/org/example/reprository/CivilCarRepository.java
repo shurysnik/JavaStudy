@@ -1,7 +1,9 @@
 package org.example.reprository;
 
+import org.example.model.Auto;
 import org.example.model.CivilCar;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,11 +31,20 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
 
     @Override
     public boolean save(CivilCar civilCar) {
+        if (civilCar == null) {
+            throw new IllegalArgumentException("Civil auto must not be null");
+        }
+        if (civilCar.getPrice().equals(BigDecimal.ZERO)) {
+            civilCar.setPrice(BigDecimal.valueOf(-1));
+        }
         return civilCars.add(civilCar);
     }
 
     @Override
     public boolean saveAll(List<CivilCar> civilCar) {
+        if (civilCar == null) {
+            throw new IllegalArgumentException("Civil autos must not be null");
+        }
         return civilCars.addAll(civilCar);
     }
 
@@ -45,6 +56,15 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
             return true;
         }
         return false;
+    }
+
+    public boolean updateByModel(String model, CivilCar copyFrom) {
+        for (CivilCar civilCar : civilCars) {
+            if (civilCar.getModel().equals(model)) {
+                CivilCarRepository.CivilCarCopy.copy(copyFrom, civilCar);
+            }
+        }
+        return true;
     }
 
     @Override
@@ -61,7 +81,6 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
         static void copy(CivilCar from, CivilCar to) {
             to.setFuelConsumption(from.getFuelConsumption());
             to.setFuelType(from.getFuelType());
-            to.setManufacturer(from.getManufacturer());
             to.setModel(from.getModel());
             to.setPrice(from.getPrice());
             to.setRacingTires(from.getRacingTires());

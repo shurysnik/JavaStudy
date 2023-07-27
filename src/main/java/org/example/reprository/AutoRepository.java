@@ -1,5 +1,6 @@
 package org.example.reprository;
 
+
 import org.example.model.Auto;
 
 import java.math.BigDecimal;
@@ -37,13 +38,12 @@ public class AutoRepository implements CrudRepository<Auto> {
             auto.setPrice(BigDecimal.valueOf(-1));
         }
         return autos.add(auto);
-
     }
 
     @Override
     public boolean saveAll(List<Auto> auto) {
         if (auto == null) {
-            return false;
+            throw new IllegalArgumentException("Autos must not be null");
         }
         return autos.addAll(auto);
     }
@@ -67,6 +67,7 @@ public class AutoRepository implements CrudRepository<Auto> {
         return true;
     }
 
+
     @Override
     public boolean delete(String id) {
         return autos.removeIf(auto -> auto.getId().equals(id));
@@ -78,8 +79,9 @@ public class AutoRepository implements CrudRepository<Auto> {
     }
 
     private static class AutoCopy {
-        static void copy(Auto from, Auto to) {
+        static void copy(final Auto from, final Auto to) {
             to.setModel(from.getModel());
+            to.setRacingTires(from.getRacingTires());
             to.setBodyType(from.getBodyType());
             to.setPrice(from.getPrice());
         }

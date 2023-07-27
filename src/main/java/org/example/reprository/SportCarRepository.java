@@ -2,6 +2,7 @@ package org.example.reprository;
 
 import org.example.model.SportCar;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,11 +30,20 @@ public class SportCarRepository implements CrudRepository<SportCar> {
 
     @Override
     public boolean save(SportCar sportCar) {
+        if (sportCar == null) {
+            throw new IllegalArgumentException("Sport car must not be null");
+        }
+        if (sportCar.getPrice().equals(BigDecimal.ZERO)) {
+            sportCar.setPrice(BigDecimal.valueOf(-1));
+        }
         return sportCars.add(sportCar);
     }
 
     @Override
     public boolean saveAll(List<SportCar> sportCar) {
+        if (sportCar == null) {
+            throw new IllegalArgumentException("Sport car must not be null");
+        }
         return sportCars.addAll(sportCar);
     }
 
@@ -45,6 +55,15 @@ public class SportCarRepository implements CrudRepository<SportCar> {
             return true;
         }
         return false;
+    }
+
+    public boolean updateByYear(int year, SportCar copyFrom) {
+        for (SportCar sportCar : sportCars) {
+            if (sportCar.getYear() == year) {
+                SportCarRepository.SportCarCopy.copy(copyFrom, sportCar);
+            }
+        }
+        return true;
     }
 
     @Override
@@ -65,7 +84,6 @@ public class SportCarRepository implements CrudRepository<SportCar> {
             to.setModel(from.getModel());
             to.setRacingTires(from.getRacingTires());
             to.setPrice(from.getPrice());
-            to.setManufacturer(from.getManufacturer());
         }
     }
 }
