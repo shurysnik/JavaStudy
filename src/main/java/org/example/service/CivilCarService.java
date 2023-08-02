@@ -17,9 +17,13 @@ import java.util.Random;
 public class CivilCarService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CivilCarService.class);
     private static final Random RANDOM = new Random();
-    private static final CivilCarRepository CIVIL_CAR_REPOSITORY = new CivilCarRepository();
+    private final CivilCarRepository civilCarRepository;
 
-    public List<CivilCar> createAuto(int count) {
+    public CivilCarService(CivilCarRepository civilCarRepository) {
+        this.civilCarRepository = civilCarRepository;
+    }
+
+    public List<CivilCar> createAndSaveAutos(int count) {
         List<CivilCar> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             double randomValue = RANDOM.nextDouble() * 10000.0 + 1000.0;
@@ -35,9 +39,18 @@ public class CivilCarService {
                     calculateFuelConsumption(randomFuelType), // Passing the fuel type to  calculate calculateFuelConsumption() method
                     randomFuelType);
             result.add(auto);
+            civilCarRepository.save(auto);
             LOGGER.debug("Created auto {}", auto.getId());
         }
         return result;
+    }
+
+    public CivilCar findById(String id) {
+        if (id == null) {
+            return civilCarRepository.getById("");
+        } else {
+            return civilCarRepository.getById(id);
+        }
     }
 
     private FuelType getRandomFuelType() {
@@ -61,6 +74,22 @@ public class CivilCarService {
         return Math.round((RANDOM.nextDouble() * (max - min) + min) * 1000.0) / 1000.0;
     }
 
+    public CivilCar update(CivilCar civilCar) {
+        if (civilCar == null) {
+            throw new IllegalArgumentException("Civil auto must be not null");
+        }
+        civilCar = new CivilCar(
+                "Model",
+                BigDecimal.ONE,
+                Manufacturer.MAZDA,
+                RacingTires.SLICKS
+                , 0.0, FuelType.PETROL);
+        civilCarRepository.update(civilCar);
+        LOGGER.info("New Auto {}", civilCar);
+        civilCarRepository.save(civilCar);
+        return civilCar;
+    }
+
     private Manufacturer getRandomManufacturer() {
         final Manufacturer[] values = Manufacturer.values();
         final int index = RANDOM.nextInt(values.length);
@@ -73,12 +102,24 @@ public class CivilCarService {
         return values[index];
     }
 
-    public void saveAutos(List<CivilCar> civilCars) {
-        CIVIL_CAR_REPOSITORY.saveAll(civilCars);
+    public boolean saveAutos(List<CivilCar> civilCars) {
+        return civilCarRepository.saveAll(civilCars);
+    }
+
+    public boolean saveAuto(CivilCar civilCar) {
+        return civilCarRepository.save(civilCar);
+    }
+
+    public boolean delete(CivilCar civilCar) {
+        return civilCarRepository.delete(civilCar);
+    }
+
+    public boolean deleteById(String id) {
+        return civilCarRepository.deleteById(id);
     }
 
     public void printAll() {
-        for (CivilCar civilCar : CIVIL_CAR_REPOSITORY.getAll()) {
+        for (CivilCar civilCar : civilCarRepository.getAll()) {
             System.out.println(civilCar);
         }
     }

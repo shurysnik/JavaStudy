@@ -16,9 +16,13 @@ import java.util.Random;
 public class AutoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoService.class);
     private static final Random RANDOM = new Random();
-    private static final AutoRepository AUTO_REPOSITORY = new AutoRepository();
+    private final AutoRepository autoRepository;
 
-    public List<Auto> createAuto(int count) {
+    public AutoService(AutoRepository autoRepository) {
+        this.autoRepository = autoRepository;
+    }
+
+    public List<Auto> createAndSaveAutos(int count) {
         List<Auto> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             double randomValue = RANDOM.nextDouble() * 10000.0 + 1000.0; // Generate a random value from 1000 to 11000
@@ -33,31 +37,44 @@ public class AutoService {
                     getRandomRacingTires(),
                     "Model-" + randomBodyType);
             result.add(auto);
+            autoRepository.save(auto);
             LOGGER.debug("Created auto {}", auto.getId());
         }
         return result;
     }
 
+    public Auto findOneById(String id) {
+        if (id == null) {
+            return autoRepository.getById("");
+        } else {
+            return autoRepository.getById(id);
+        }
+    }
+
     public Auto update(Auto auto) {
+        if (auto == null) {
+            throw new IllegalArgumentException("Auto must be not null");
+        }
         auto = new Auto(
-                "Model-" + 1,
+                "Model",
                 BigDecimal.ONE,
                 Manufacturer.MAZDA,
                 RacingTires.SLICKS,
-                "Model-" + 1);
-        AUTO_REPOSITORY.update(auto);
+                "Model");
+        autoRepository.update(auto);
         LOGGER.info("New Auto {}", auto);
+        autoRepository.save(auto);
         return auto;
     }
 
-    public boolean delete(String auto) {
-        AUTO_REPOSITORY.delete(auto);
+    public boolean deleteById(String auto) {
+        autoRepository.deleteById(auto);
         LOGGER.info("Delete Auto {}", auto);
-        return AUTO_REPOSITORY.delete(auto);
+        return autoRepository.deleteById(auto);
     }
 
-    public boolean deleteAuto(Auto auto) {
-        return AUTO_REPOSITORY.delete(auto);
+    public boolean delete(Auto auto) {
+        return autoRepository.delete(auto);
     }
 
     private Manufacturer getRandomManufacturer() {
@@ -72,16 +89,16 @@ public class AutoService {
         return values[index];
     }
 
-    public void saveAutos(List<Auto> autos) {
-        AUTO_REPOSITORY.saveAll(autos);
+    public boolean saveAutos(List<Auto> autos) {
+        return autoRepository.saveAll(autos);
     }
 
-    public void saveAuto(Auto auto) {
-        AUTO_REPOSITORY.save(auto);
+    public boolean saveAuto(Auto auto) {
+        return autoRepository.save(auto);
     }
 
     public void printAll() {
-        for (Auto auto : AUTO_REPOSITORY.getAll()) {
+        for (Auto auto : autoRepository.getAll()) {
             System.out.println(auto);
         }
     }

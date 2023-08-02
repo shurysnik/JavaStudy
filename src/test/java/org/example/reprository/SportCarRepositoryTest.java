@@ -1,6 +1,9 @@
 package org.example.reprository;
 
-import org.example.model.*;
+import org.example.model.Color;
+import org.example.model.Manufacturer;
+import org.example.model.RacingTires;
+import org.example.model.SportCar;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 class SportCarRepositoryTest {
 
     private SportCarRepository target;
@@ -137,7 +141,6 @@ class SportCarRepositoryTest {
     void saveAll() {
         final boolean actual = target.saveAll(List.of(createSimpleSportCar()));
         Assertions.assertTrue(actual);
-
     }
 
     @Test
@@ -175,24 +178,23 @@ class SportCarRepositoryTest {
         Assertions.assertNotNull(otherSportCar);
         sportCar.setPrice(BigDecimal.TEN);
         sportCar.setManufacturer(Manufacturer.TOYOTA);
-        final boolean expected = target.updateByYear(otherSportCar.getYear(), sportCar);
-        Assertions.assertTrue(expected);
+        final boolean actual = target.updateByYear(otherSportCar.getYear(), sportCar);
+        Assertions.assertTrue(actual);
         Assertions.assertEquals(otherSportCar.getYear(), sportCar.getYear());
         Assertions.assertNotEquals(otherSportCar.getManufacturer(), sportCar.getManufacturer());
     }
 
     @Test
     void delete() {
-        final boolean actual = target.delete(sportCar.getId());
+        final boolean actual = target.deleteById(sportCar.getId());
         Assertions.assertTrue(actual);
     }
 
     @Test
     void delete_fail() {
-        final boolean actual = target.delete("nothing");
+        final boolean actual = target.deleteById("nothing");
         Assertions.assertFalse(actual);
     }
-
 
     @Test
     void deleteCivilSportaCar() {

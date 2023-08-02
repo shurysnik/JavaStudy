@@ -69,7 +69,7 @@ public class AutoRepository implements CrudRepository<Auto> {
 
 
     @Override
-    public boolean delete(String id) {
+    public boolean deleteById(String id) {
         return autos.removeIf(auto -> auto.getId().equals(id));
     }
 

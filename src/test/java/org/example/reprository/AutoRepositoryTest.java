@@ -142,20 +142,20 @@ class AutoRepositoryTest {
         otherAuto.setPrice(BigDecimal.TEN);
         final boolean actual = target.updateByBodyType(auto.getBodyType(), otherAuto);
         Assertions.assertTrue(actual);
-        final Auto actualAuto = target.getById(auto.getId());
-        Assertions.assertEquals(Manufacturer.HYUNDAI, actualAuto.getManufacturer());
-        Assertions.assertEquals(BigDecimal.TEN, actualAuto.getPrice());
+        final Auto expected = target.getById(auto.getId());
+        Assertions.assertEquals(Manufacturer.HYUNDAI, expected.getManufacturer());
+        Assertions.assertEquals(BigDecimal.TEN, expected.getPrice());
     }
 
     @Test
     void delete() {
-        final boolean actual = target.delete(auto.getId());
+        final boolean actual = target.deleteById(auto.getId());
         Assertions.assertTrue(actual);
     }
 
     @Test
     void delete_fail() {
-        final boolean actual = target.delete("nothing");
+        final boolean actual = target.deleteById("nothing");
         Assertions.assertFalse(actual);
     }
 

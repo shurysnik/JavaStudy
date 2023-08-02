@@ -17,9 +17,14 @@ import java.util.Random;
 public class SportCarService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SportCarService.class);
     private static final Random RANDOM = new Random();
-    private static final SportCarRepository SPORT_CAR_REPOSITORY = new SportCarRepository();
+    private final SportCarRepository sportCarRepository;
 
-    public List<SportCar> createAuto(int count) {
+    public SportCarService(SportCarRepository sportCarRepository) {
+        this.sportCarRepository = sportCarRepository;
+    }
+
+
+    public List<SportCar> createAndSaveAutos(int count) {
         List<SportCar> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             double randomPriceValue = RANDOM.nextDouble() * 10000.0 + 1000.0; // Generate a random value from 1000 to 11000
@@ -39,6 +44,7 @@ public class SportCarService {
                     randomYearValue,
                     getRandomColorSportCar());
             result.add(auto);
+            sportCarRepository.save(auto);
             LOGGER.debug("Created auto {}", auto.getId());
         }
         return result;
@@ -62,14 +68,59 @@ public class SportCarService {
         return values[index];
     }
 
+    public boolean delete(SportCar sportCar) {
+        return sportCarRepository.delete(sportCar);
+    }
 
-    public void saveAutos(List<SportCar> sportCars) {
-        SPORT_CAR_REPOSITORY.saveAll(sportCars);
+    public boolean deleteById(String id) {
+        return sportCarRepository.deleteById(id);
+    }
 
+    public boolean saveAutos(List<SportCar> sportCars) {
+        if (sportCars == null) {
+            throw new IllegalArgumentException("Sport car must not be null");
+        }
+        return sportCarRepository.saveAll(sportCars);
+    }
+
+    public SportCar update(SportCar sportCar) {
+        if (sportCar == null) {
+            throw new IllegalArgumentException("Sport car must be not null");
+        }
+        sportCar = new SportCar(
+                "Model",
+                BigDecimal.ONE,
+                Manufacturer.MAZDA,
+                RacingTires.SLICKS,
+                BigDecimal.ONE,
+                2010, Color.YELLOW);
+
+        sportCarRepository.update(sportCar);
+        LOGGER.info("New Auto {}", sportCar);
+        sportCarRepository.save(sportCar);
+        return sportCar;
+    }
+
+    public boolean saveAuto(SportCar sportCar) {
+        if (sportCar == null) {
+            throw new IllegalArgumentException("Sport car must not be null");
+        }
+        if (sportCar.getPrice().equals(BigDecimal.ZERO)) {
+            sportCar.setPrice(BigDecimal.valueOf(-1));
+        }
+        return sportCarRepository.save(sportCar);
+    }
+
+    public SportCar findOneById(String id) {
+        if (id == null) {
+            return sportCarRepository.getById("");
+        } else {
+            return sportCarRepository.getById(id);
+        }
     }
 
     public void printAll() {
-        for (SportCar sportCar : SPORT_CAR_REPOSITORY.getAll()) {
+        for (SportCar sportCar : sportCarRepository.getAll()) {
             System.out.println(sportCar);
         }
     }

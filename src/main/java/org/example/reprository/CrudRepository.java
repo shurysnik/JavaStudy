@@ -14,7 +14,7 @@ public interface CrudRepository<T> {
 
     boolean update(T auto);
 
-    boolean delete(String id);
+    boolean deleteById(String id);
 
     boolean delete(T auto);
 }

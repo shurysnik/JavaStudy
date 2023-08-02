@@ -1,6 +1,9 @@
 package org.example.reprository;
 
-import org.example.model.*;
+import org.example.model.CivilCar;
+import org.example.model.FuelType;
+import org.example.model.Manufacturer;
+import org.example.model.RacingTires;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,7 +113,6 @@ class CivilCarRepositoryTest {
         Assertions.assertEquals(civilCar.getPrice(), expected.getPrice());
     }
 
-
     @Test
     void saveAll() {
         final boolean actual = target.saveAll(List.of(createSimpleCivilCar()));
@@ -153,19 +155,19 @@ class CivilCarRepositoryTest {
         final boolean actual = target.updateByModel(civilCar.getModel(), otherCivilCar);
         Assertions.assertTrue(actual);
         final CivilCar expected = target.getById(civilCar.getId());
-        Assertions.assertEquals(otherCivilCar.getPrice(), civilCar.getPrice());
-        Assertions.assertEquals(Manufacturer.HYUNDAI, civilCar.getManufacturer());
+        Assertions.assertEquals(otherCivilCar.getPrice(), expected.getPrice());
+        Assertions.assertEquals(Manufacturer.HYUNDAI, expected.getManufacturer());
     }
 
     @Test
     void delete() {
-        final boolean actual = target.delete(civilCar.getId());
+        final boolean actual = target.deleteById(civilCar.getId());
         Assertions.assertTrue(actual);
     }
 
     @Test
     void delete_fail() {
-        final boolean actual = target.delete("something");
+        final boolean actual = target.deleteById("something");
         Assertions.assertFalse(actual);
     }
 

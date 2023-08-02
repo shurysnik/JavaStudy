@@ -1,6 +1,5 @@
 package org.example.reprository;
 
-import org.example.model.Auto;
 import org.example.model.CivilCar;
 
 import java.math.BigDecimal;
@@ -68,7 +67,7 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean deleteById(String id) {
         return civilCars.removeIf(auto -> auto.getId().equals(id));
     }
 

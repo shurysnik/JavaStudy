@@ -67,7 +67,7 @@ public class SportCarRepository implements CrudRepository<SportCar> {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean deleteById(String id) {
         return sportCars.removeIf(sportCar -> sportCar.getId().equals(id));
     }
 
