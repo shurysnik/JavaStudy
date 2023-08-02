@@ -40,7 +40,6 @@ class CivilCarServiceTest {
         final int expected = 0;
         Assertions.assertEquals(expected, actual.size());
         Mockito.verify(civilCarRepository, Mockito.times(0)).save(civilCar);
-
     }
 
     @Test
@@ -49,7 +48,6 @@ class CivilCarServiceTest {
         final int expected = 0;
         Assertions.assertEquals(expected, actual.size());
         Mockito.verify(civilCarRepository, Mockito.times(0)).save(civilCar);
-
     }
 
     @Test

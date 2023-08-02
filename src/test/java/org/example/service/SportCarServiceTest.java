@@ -27,7 +27,6 @@ class SportCarServiceTest {
         sportCarRepository = Mockito.mock(SportCarRepository.class);
         target = new SportCarService(sportCarRepository);
         sportCar = createSimpleSportCar();
-
     }
 
     public SportCar createSimpleSportCar() {
@@ -41,7 +40,6 @@ class SportCarServiceTest {
         final int expected = 0;
         Mockito.verify(sportCarRepository, Mockito.times(0)).save(Mockito.any());
         Assertions.assertEquals(expected, actual.size());
-
     }
 
     @Test
@@ -50,7 +48,6 @@ class SportCarServiceTest {
         final int expected = 0;
         Assertions.assertEquals(expected, actual.size());
         Mockito.verify(sportCarRepository, Mockito.times(0)).save(Mockito.any());
-
     }
 
     @Test
@@ -103,7 +100,6 @@ class SportCarServiceTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> target.saveAuto(null), "Sport car must not be null");
     }
-
 
     @Test
     void saveAutosFalse() {
@@ -160,19 +156,6 @@ class SportCarServiceTest {
                 () -> target.update(null), "Sport car must be not null");
     }
 
-    //        sportCar = new SportCar(
-//                "Model",
-//                BigDecimal.ONE,
-//                Manufacturer.MAZDA,
-//                RacingTires.SLICKS,
-//                BigDecimal.ONE,
-//                2010, Color.YELLOW);
-//
-//        sportCarRepository.update(sportCar);
-//        LOGGER.info("New Auto {}", sportCar);
-//        sportCarRepository.save(sportCar);
-//        return sportCar;
-//    }
     @Test
     void update_positiveTest() {
         Mockito.when(sportCarRepository.update(sportCar)).thenReturn(true);
