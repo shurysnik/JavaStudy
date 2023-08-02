@@ -49,13 +49,13 @@ class AutoServiceTest {
         Assertions.assertEquals(0, actual.size());
         Mockito.verify(autoRepository, times(0)).save(Mockito.any());
     }
+
     @Test
     void findOneByIdByCaptor() {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         target.findOneById("404");
         Mockito.verify(autoRepository).getById(captor.capture());
         assertEquals("404", captor.getValue());
-
     }
 
     @Test
@@ -68,12 +68,12 @@ class AutoServiceTest {
 
     @Test
     void findOneByIdArgumentMatcherHospitalCar() {
-
         ArgumentMatcher<String> matcher = string -> string.startsWith("404");
         String id = "404232";
         target.findOneById(id);
         assertTrue(matcher.matches(id));
     }
+
     @Test
     void createAndSaveAutos() {
         List<Auto> actual = target.createAndSaveAutos(5);
