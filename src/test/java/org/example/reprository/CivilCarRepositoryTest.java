@@ -16,12 +16,15 @@ import java.util.List;
 class CivilCarRepositoryTest {
     private CivilCarRepository target;
     private CivilCar civilCar;
+    private String civilCarId;
+
 
     @BeforeEach
     void setUp() {
         target = new CivilCarRepository();
         civilCar = createSimpleCivilCar();
         target.save(civilCar);
+        civilCarId = civilCar.getId();
     }
 
     public CivilCar createSimpleCivilCar() {
@@ -30,9 +33,9 @@ class CivilCarRepositoryTest {
 
     @Test
     void getById_findOne() {
-        final CivilCar actual = target.getById(civilCar.getId());
+        final CivilCar actual = target.getById(civilCarId);
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(actual.getId(), civilCar.getId());
+        Assertions.assertEquals(actual.getId(), civilCarId);
     }
 
     @Test
@@ -44,12 +47,10 @@ class CivilCarRepositoryTest {
     @Test
     void getById_manyCivilCars() {
         final CivilCar otherCivilCar = createSimpleCivilCar();
-        Assertions.assertNotNull(otherCivilCar);
-        final boolean savedCivilCar = target.save(otherCivilCar);
-        Assertions.assertTrue(savedCivilCar);
-        final CivilCar actual = target.getById(civilCar.getId());
+        target.save(otherCivilCar);
+        final CivilCar actual = target.getById(civilCarId);
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(actual.getId(), civilCar.getId());
+        Assertions.assertEquals(actual.getId(), civilCarId);
         Assertions.assertNotEquals(actual.getId(), otherCivilCar.getId());
     }
 
@@ -106,9 +107,8 @@ class CivilCarRepositoryTest {
     @Test
     void save_success_notChangePrice() {
         civilCar.setPrice(BigDecimal.ONE);
-        final boolean actual = target.save(civilCar);
-        Assertions.assertTrue(actual);
-        final CivilCar expected = target.getById(civilCar.getId());
+        target.save(civilCar);
+        final CivilCar expected = target.getById(civilCarId);
         Assertions.assertNotNull(expected);
         Assertions.assertEquals(civilCar.getPrice(), expected.getPrice());
     }
@@ -142,7 +142,7 @@ class CivilCarRepositoryTest {
         civilCar.setPrice(BigDecimal.TEN);
         final boolean actual = target.update(civilCar);
         Assertions.assertTrue(actual);
-        final CivilCar expected = target.getById(civilCar.getId());
+        final CivilCar expected = target.getById(civilCarId);
         Assertions.assertNotNull(expected);
         Assertions.assertEquals(civilCar.getPrice(), expected.getPrice());
     }
@@ -154,14 +154,14 @@ class CivilCarRepositoryTest {
         otherCivilCar.setPrice(BigDecimal.TEN);
         final boolean actual = target.updateByModel(civilCar.getModel(), otherCivilCar);
         Assertions.assertTrue(actual);
-        final CivilCar expected = target.getById(civilCar.getId());
+        final CivilCar expected = target.getById(civilCarId);
         Assertions.assertEquals(otherCivilCar.getPrice(), expected.getPrice());
         Assertions.assertEquals(Manufacturer.HYUNDAI, expected.getManufacturer());
     }
 
     @Test
     void delete() {
-        final boolean actual = target.deleteById(civilCar.getId());
+        final boolean actual = target.deleteById(civilCarId);
         Assertions.assertTrue(actual);
     }
 

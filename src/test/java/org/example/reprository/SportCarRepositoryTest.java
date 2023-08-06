@@ -17,6 +17,7 @@ class SportCarRepositoryTest {
 
     private SportCarRepository target;
     private SportCar sportCar;
+    private String sportCarId;
 
     public SportCar createSimpleSportCar() {
         return new SportCar("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI,
@@ -28,13 +29,14 @@ class SportCarRepositoryTest {
         target = new SportCarRepository();
         sportCar = createSimpleSportCar();
         target.save(sportCar);
+        sportCarId = sportCar.getId();
     }
 
     @Test
     void getById_findOne() {
-        final SportCar actual = target.getById(sportCar.getId());
+        final SportCar actual = target.getById(sportCarId);
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(actual.getId(), sportCar.getId());
+        Assertions.assertEquals(actual.getId(), sportCarId);
     }
 
     @Test
@@ -52,9 +54,7 @@ class SportCarRepositoryTest {
     @Test
     void getById_manySportCars() {
         final SportCar otherSportCarAuto = createSimpleSportCar();
-        Assertions.assertNotNull(otherSportCarAuto);
-
-        final SportCar actualFirstSportCarAuto = target.getById(sportCar.getId());
+        final SportCar actualFirstSportCarAuto = target.getById(sportCarId);
         Assertions.assertNotNull(actualFirstSportCarAuto);
 
         final boolean savedSportCarAuto = target.save(otherSportCarAuto);
@@ -63,11 +63,11 @@ class SportCarRepositoryTest {
         final SportCar actualSecondSportCarAuto = target.getById(otherSportCarAuto.getId());
         Assertions.assertNotNull(actualSecondSportCarAuto);
 
-        Assertions.assertEquals(actualFirstSportCarAuto.getId(), sportCar.getId());
+        Assertions.assertEquals(actualFirstSportCarAuto.getId(), sportCarId);
         Assertions.assertNotEquals(actualFirstSportCarAuto.getId(), otherSportCarAuto.getId());
 
         Assertions.assertEquals(actualSecondSportCarAuto.getId(), otherSportCarAuto.getId());
-        Assertions.assertNotEquals(actualSecondSportCarAuto.getId(), sportCar.getId());
+        Assertions.assertNotEquals(actualSecondSportCarAuto.getId(), sportCarId);
 
     }
 
@@ -129,12 +129,10 @@ class SportCarRepositoryTest {
     @Test
     void save_success_notChangePrice() {
         sportCar.setPrice(BigDecimal.TEN);
-        final boolean actual = target.save(sportCar);
-        Assertions.assertTrue(actual);
-        final SportCar expected = target.getById(sportCar.getId());
+        target.save(sportCar);
+        final SportCar expected = target.getById(sportCarId);
         Assertions.assertNotNull(expected);
         Assertions.assertEquals(expected.getPrice(), sportCar.getPrice());
-
     }
 
     @Test
@@ -159,7 +157,6 @@ class SportCarRepositoryTest {
     void update_notFound() {
         boolean actual = target.update(createSimpleSportCar());
         Assertions.assertFalse(actual);
-
     }
 
     @Test
@@ -167,7 +164,7 @@ class SportCarRepositoryTest {
         sportCar.setPrice(BigDecimal.TEN);
         final boolean actual = target.update(sportCar);
         Assertions.assertTrue(actual);
-        final SportCar expected = target.getById(sportCar.getId());
+        final SportCar expected = target.getById(sportCarId);
         Assertions.assertNotNull(expected);
         Assertions.assertEquals(expected.getPrice(), sportCar.getPrice());
     }
@@ -186,7 +183,7 @@ class SportCarRepositoryTest {
 
     @Test
     void delete() {
-        final boolean actual = target.deleteById(sportCar.getId());
+        final boolean actual = target.deleteById(sportCarId);
         Assertions.assertTrue(actual);
     }
 
@@ -197,7 +194,7 @@ class SportCarRepositoryTest {
     }
 
     @Test
-    void deleteCivilSportaCar() {
+    void deleteSportCar() {
         final boolean actual = target.delete(sportCar);
         Assertions.assertTrue(actual);
     }

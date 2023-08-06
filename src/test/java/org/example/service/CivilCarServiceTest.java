@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -21,12 +22,14 @@ class CivilCarServiceTest {
     private CivilCarService target;
     private CivilCarRepository civilCarRepository;
     private CivilCar civilCar;
+    private String civilCarId;
 
     @BeforeEach
     void setUp() {
         civilCarRepository = Mockito.mock(CivilCarRepository.class);
         target = new CivilCarService(civilCarRepository);
         civilCar = createSimpleCivilCar();
+        civilCarId = civilCar.getId();
     }
 
     public CivilCar createSimpleCivilCar() {
@@ -69,16 +72,16 @@ class CivilCarServiceTest {
     void findById_negativeTest() {
         Mockito.when(civilCarRepository.getById("")).thenReturn(civilCar);
         final CivilCar actual = target.findById("");
-        Assertions.assertEquals(actual.getId(), civilCar.getId());
+        Assertions.assertEquals(actual.getId(), civilCarId);
         Mockito.verify(civilCarRepository, times(1)).getById("");
     }
 
     @Test
     void findById_positiveTest() {
-        Mockito.when(civilCarRepository.getById(civilCar.getId())).thenReturn(civilCar);
-        final CivilCar actual = target.findById(civilCar.getId());
-        Assertions.assertEquals(actual.getId(), civilCar.getId());
-        Mockito.verify(civilCarRepository, times(1)).getById(civilCar.getId());
+        Mockito.when(civilCarRepository.getById(civilCarId)).thenReturn(civilCar);
+        final CivilCar actual = target.findById(civilCarId);
+        Assertions.assertEquals(actual.getId(), civilCarId);
+        Mockito.verify(civilCarRepository, times(1)).getById(civilCarId);
     }
 
     @Test
@@ -117,8 +120,8 @@ class CivilCarServiceTest {
 
     @Test
     void deleteById() {
-        Mockito.when(civilCarRepository.deleteById(civilCar.getId())).thenReturn(true);
-        final boolean actual = target.deleteById(civilCar.getId());
+        Mockito.when(civilCarRepository.deleteById(civilCarId)).thenReturn(true);
+        final boolean actual = target.deleteById(civilCarId);
         Assertions.assertTrue(actual);
     }
 

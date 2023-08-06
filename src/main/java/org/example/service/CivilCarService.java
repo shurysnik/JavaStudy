@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CivilCarService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CivilCarService.class);
@@ -26,7 +28,8 @@ public class CivilCarService {
     public List<CivilCar> createAndSaveAutos(int count) {
         List<CivilCar> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
-            double randomValue = RANDOM.nextDouble() * 10000.0 + 1000.0;
+
+            double randomValue = ThreadLocalRandom.current().nextDouble(1000.0, 11000.0);
             BigDecimal randomBigDecimalPrice = BigDecimal.valueOf(randomValue).setScale(3, RoundingMode.HALF_UP);
             int randomModel = RANDOM.nextInt(1000);
             FuelType randomFuelType = getRandomFuelType(); //Getting a random fuel type value
@@ -46,11 +49,7 @@ public class CivilCarService {
     }
 
     public CivilCar findById(String id) {
-        if (id == null) {
-            return civilCarRepository.getById("");
-        } else {
-            return civilCarRepository.getById(id);
-        }
+        return civilCarRepository.getById(Objects.requireNonNullElse(id, ""));
     }
 
     private FuelType getRandomFuelType() {
@@ -102,12 +101,12 @@ public class CivilCarService {
         return values[index];
     }
 
-    public boolean saveAutos(List<CivilCar> civilCars) {
-        return civilCarRepository.saveAll(civilCars);
+    public boolean saveAutos(List<CivilCar> savedCivilCars) {
+        return civilCarRepository.saveAll(savedCivilCars);
     }
 
-    public boolean saveAuto(CivilCar civilCar) {
-        return civilCarRepository.save(civilCar);
+    public boolean saveAuto(CivilCar savedCivilCar) {
+        return civilCarRepository.save(savedCivilCar);
     }
 
     public boolean delete(CivilCar civilCar) {

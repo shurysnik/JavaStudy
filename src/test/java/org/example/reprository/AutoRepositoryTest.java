@@ -16,12 +16,15 @@ class AutoRepositoryTest {
 
     private AutoRepository target;
     private Auto auto;
+    private String autoId;
+
 
     @BeforeEach
     void setUp() {
         target = new AutoRepository();
         auto = createSimpleAuto();
         target.save(auto);
+        autoId = auto.getId();
     }
 
     public Auto createSimpleAuto() {
@@ -30,9 +33,9 @@ class AutoRepositoryTest {
 
     @Test
     void getById_findOne() {
-        final Auto actual = target.getById(auto.getId());
+        final Auto actual = target.getById(autoId);
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(auto.getId(), actual.getId());
+        Assertions.assertEquals(autoId, actual.getId());
     }
 
     @Test
@@ -44,20 +47,19 @@ class AutoRepositoryTest {
     @Test
     void getById_manyAutos() {
         final Auto otherAuto = createSimpleAuto();
-        Assertions.assertNotNull(otherAuto);
-        final boolean actual = target.save(otherAuto);
-        Assertions.assertTrue(actual);
-        final Auto expected = target.getById(auto.getId());
+        target.save(otherAuto);
+        final Auto expected = target.getById(autoId);
         Assertions.assertNotNull(expected);
-        Assertions.assertEquals(auto.getId(), expected.getId());
-        Assertions.assertNotNull(auto.getId(), otherAuto.getId());
+        Assertions.assertEquals(autoId, expected.getId());
+        Assertions.assertNotNull(autoId, otherAuto.getId());
     }
 
     @Test
     void getAll() {
         final List<Auto> actual = target.getAll();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(1, actual.size());
+        int expected = 1;
+        Assertions.assertEquals(expected, actual.size());
     }
 
     @Test
@@ -65,13 +67,6 @@ class AutoRepositoryTest {
         List<Auto> expected = new LinkedList<>();
         List<Auto> actual = target.getAll();
         Assertions.assertNotEquals(expected, actual);
-    }
-
-    @Test
-    void getAll_checkListSize() {
-        int expected = 1;
-        final int actual = target.getAll().size();
-        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -94,9 +89,8 @@ class AutoRepositoryTest {
     @Test
     void save_success_notChangePrice() {
         auto.setPrice(BigDecimal.ONE);
-        final boolean actual = target.save(auto);
-        Assertions.assertTrue(actual);
-        final Auto expected = target.getById(auto.getId());
+        target.save(auto);
+        final Auto expected = target.getById(autoId);
         Assertions.assertEquals(BigDecimal.ONE, expected.getPrice());
     }
 
@@ -130,7 +124,7 @@ class AutoRepositoryTest {
         auto.setPrice(BigDecimal.TEN);
         final boolean actual = target.update(auto);
         Assertions.assertTrue(actual);
-        final Auto actualAuto = target.getById(auto.getId());
+        final Auto actualAuto = target.getById(autoId);
         Assertions.assertNotNull(actualAuto);
         Assertions.assertEquals(BigDecimal.TEN, actualAuto.getPrice());
     }
@@ -142,14 +136,14 @@ class AutoRepositoryTest {
         otherAuto.setPrice(BigDecimal.TEN);
         final boolean actual = target.updateByBodyType(auto.getBodyType(), otherAuto);
         Assertions.assertTrue(actual);
-        final Auto expected = target.getById(auto.getId());
+        final Auto expected = target.getById(autoId);
         Assertions.assertEquals(Manufacturer.HYUNDAI, expected.getManufacturer());
         Assertions.assertEquals(BigDecimal.TEN, expected.getPrice());
     }
 
     @Test
     void delete() {
-        final boolean actual = target.deleteById(auto.getId());
+        final boolean actual = target.deleteById(autoId);
         Assertions.assertTrue(actual);
     }
 

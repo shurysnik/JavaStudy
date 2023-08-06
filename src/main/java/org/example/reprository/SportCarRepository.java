@@ -29,22 +29,22 @@ public class SportCarRepository implements CrudRepository<SportCar> {
     }
 
     @Override
-    public boolean save(SportCar sportCar) {
-        if (sportCar == null) {
+    public boolean save(SportCar savedSportCar) {
+        if (savedSportCar == null) {
             throw new IllegalArgumentException("Sport car must not be null");
         }
-        if (sportCar.getPrice().equals(BigDecimal.ZERO)) {
-            sportCar.setPrice(BigDecimal.valueOf(-1));
+        if (savedSportCar.getPrice().equals(BigDecimal.ZERO)) {
+            savedSportCar.setPrice(BigDecimal.valueOf(-1));
         }
-        return sportCars.add(sportCar);
+        return sportCars.add(savedSportCar);
     }
 
     @Override
-    public boolean saveAll(List<SportCar> sportCar) {
-        if (sportCar == null) {
+    public boolean saveAll(List<SportCar> savedSportCars) {
+        if (savedSportCars == null) {
             throw new IllegalArgumentException("Sport car must not be null");
         }
-        return sportCars.addAll(sportCar);
+        return sportCars.addAll(savedSportCars);
     }
 
     @Override

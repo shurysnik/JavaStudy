@@ -21,12 +21,14 @@ class SportCarServiceTest {
     private SportCarService target;
     private SportCarRepository sportCarRepository;
     private SportCar sportCar;
+    private String sportCarId;
 
     @BeforeEach
     void setUp() {
         sportCarRepository = Mockito.mock(SportCarRepository.class);
         target = new SportCarService(sportCarRepository);
         sportCar = createSimpleSportCar();
+        sportCarId = sportCar.getId();
     }
 
     public SportCar createSimpleSportCar() {
@@ -62,16 +64,16 @@ class SportCarServiceTest {
     void findById_negativeTest() {
         Mockito.when(sportCarRepository.getById("")).thenReturn(sportCar);
         final SportCar actual = target.findOneById("");
-        Assertions.assertEquals(actual.getId(), sportCar.getId());
+        Assertions.assertEquals(actual.getId(), sportCarId);
         Mockito.verify(sportCarRepository, Mockito.times(1)).getById("");
     }
 
     @Test
     void findById_positiveTest() {
-        Mockito.when(sportCarRepository.getById(sportCar.getId())).thenReturn(sportCar);
-        final SportCar actual = target.findOneById(sportCar.getId());
-        Assertions.assertEquals(actual.getId(), sportCar.getId());
-        Mockito.verify(sportCarRepository, Mockito.times(1)).getById(sportCar.getId());
+        Mockito.when(sportCarRepository.getById(sportCarId)).thenReturn(sportCar);
+        final SportCar actual = target.findOneById(sportCarId);
+        Assertions.assertEquals(actual.getId(), sportCarId);
+        Mockito.verify(sportCarRepository, Mockito.times(1)).getById(sportCarId);
     }
 
     @Test
@@ -84,13 +86,11 @@ class SportCarServiceTest {
     @Test
     void saveAuto() {
         Mockito.when(sportCarRepository.save(sportCar)).thenReturn(true);
-        final boolean actual = target.saveAuto(sportCar);
-        Assertions.assertNotNull(sportCar);
+        target.saveAuto(sportCar);
         Assertions.assertEquals(BigDecimal.valueOf(-1), sportCar.getPrice());
         sportCar.setPrice(BigDecimal.ONE);
-
         Mockito.when(sportCarRepository.save(sportCar)).thenReturn(true);
-        final boolean actualNewSportCar = target.saveAuto(sportCar);
+        target.saveAuto(sportCar);
         Assertions.assertNotNull(sportCar);
         Assertions.assertEquals(BigDecimal.ONE, sportCar.getPrice());
     }
@@ -124,15 +124,15 @@ class SportCarServiceTest {
 
     @Test
     void deleteById() {
-        Mockito.when(sportCarRepository.deleteById(sportCar.getId())).thenReturn(true);
-        final boolean actual = target.deleteById(sportCar.getId());
+        Mockito.when(sportCarRepository.deleteById(sportCarId)).thenReturn(true);
+        final boolean actual = target.deleteById(sportCarId);
         Assertions.assertTrue(actual);
     }
 
     @Test
     void deleteById_null() {
-        Mockito.when(sportCarRepository.deleteById(sportCar.getId())).thenReturn(false);
-        final boolean actual = target.deleteById(sportCar.getId());
+        Mockito.when(sportCarRepository.deleteById(sportCarId)).thenReturn(false);
+        final boolean actual = target.deleteById(sportCarId);
         Assertions.assertFalse(actual);
     }
 

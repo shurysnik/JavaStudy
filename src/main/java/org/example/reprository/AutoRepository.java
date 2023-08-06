@@ -30,22 +30,22 @@ public class AutoRepository implements CrudRepository<Auto> {
     }
 
     @Override
-    public boolean save(Auto auto) {
-        if (auto == null) {
+    public boolean save(Auto savedAuto) {
+        if (savedAuto == null) {
             throw new IllegalArgumentException("Auto must not be null");
         }
-        if (auto.getPrice().equals(BigDecimal.ZERO)) {
-            auto.setPrice(BigDecimal.valueOf(-1));
+        if (savedAuto.getPrice().equals(BigDecimal.ZERO)) {
+            savedAuto.setPrice(BigDecimal.valueOf(-1));
         }
-        return autos.add(auto);
+        return autos.add(savedAuto);
     }
 
     @Override
-    public boolean saveAll(List<Auto> auto) {
-        if (auto == null) {
+    public boolean saveAll(List<Auto> savedAutos) {
+        if (savedAutos == null) {
             throw new IllegalArgumentException("Autos must not be null");
         }
-        return autos.addAll(auto);
+        return autos.addAll(savedAutos);
     }
 
     @Override

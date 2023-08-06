@@ -24,6 +24,7 @@ class AutoServiceTest {
     private AutoService target;
     private AutoRepository autoRepository;
     private Auto auto;
+    private String autoId;
 
     public Auto createSimpleAuto() {
         return new Auto("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
@@ -34,6 +35,7 @@ class AutoServiceTest {
         autoRepository = Mockito.mock(AutoRepository.class);
         target = new AutoService(autoRepository);
         auto = createSimpleAuto();
+        autoId = auto.getId();
     }
 
     @Test
@@ -112,10 +114,10 @@ class AutoServiceTest {
 
     @Test
     void findById() {
-        Mockito.when(autoRepository.getById(auto.getId())).thenReturn(auto);
-        final Auto actual = target.findOneById(auto.getId());
-        Assertions.assertEquals(actual.getId(), auto.getId());
-        Mockito.verify(autoRepository, times(1)).getById(auto.getId());
+        Mockito.when(autoRepository.getById(autoId)).thenReturn(auto);
+        final Auto actual = target.findOneById(autoId);
+        Assertions.assertEquals(actual.getId(), autoId);
+        Mockito.verify(autoRepository, times(1)).getById(autoId);
     }
 
     @Test
@@ -140,23 +142,14 @@ class AutoServiceTest {
     }
 
     @Test
-    void saveAutos() {
-        List<Auto> autos = List.of(createSimpleAuto());
-        Mockito.when(autoRepository.saveAll(autos)).thenReturn(true);
-        final boolean actual = target.saveAutos(autos);
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
     void delete() {
-        Mockito.when(autoRepository.deleteById(auto.getId())).thenReturn(true);
-        final boolean actual = target.deleteById(auto.getId());
+        Mockito.when(autoRepository.deleteById(autoId)).thenReturn(true);
+        final boolean actual = target.deleteById(autoId);
         Assertions.assertTrue(actual);
     }
 
     @Test
     void delete_null() {
-        Mockito.when(autoRepository.deleteById(auto.getId())).thenReturn(true);
         final boolean actual = target.delete(null);
         Assertions.assertFalse(actual);
     }
@@ -170,11 +163,16 @@ class AutoServiceTest {
 
     @Test
     void deleteAutos_null() {
-        Mockito.when(autoRepository.delete(auto)).thenReturn(true);
         final boolean actual = target.delete(null);
         Assertions.assertFalse(actual);
     }
-
+    @Test
+    void saveAutos() {
+        List<Auto> autos = List.of(createSimpleAuto());
+        Mockito.when(autoRepository.saveAll(autos)).thenReturn(true);
+        final boolean actual = target.saveAutos(autos);
+        Assertions.assertTrue(actual);
+    }
     @Test
     void saveAutos_null() {
         Mockito.when(autoRepository.saveAll(null)).thenReturn(false);

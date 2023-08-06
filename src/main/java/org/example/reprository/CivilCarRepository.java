@@ -29,22 +29,22 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
     }
 
     @Override
-    public boolean save(CivilCar civilCar) {
-        if (civilCar == null) {
+    public boolean save(CivilCar savedCivilCar) {
+        if (savedCivilCar == null) {
             throw new IllegalArgumentException("Civil auto must not be null");
         }
-        if (civilCar.getPrice().equals(BigDecimal.ZERO)) {
-            civilCar.setPrice(BigDecimal.valueOf(-1));
+        if (savedCivilCar.getPrice().equals(BigDecimal.ZERO)) {
+            savedCivilCar.setPrice(BigDecimal.valueOf(-1));
         }
-        return civilCars.add(civilCar);
+        return civilCars.add(savedCivilCar);
     }
 
     @Override
-    public boolean saveAll(List<CivilCar> civilCar) {
-        if (civilCar == null) {
+    public boolean saveAll(List<CivilCar> savedCivilCars) {
+        if (savedCivilCars == null) {
             throw new IllegalArgumentException("Civil autos must not be null");
         }
-        return civilCars.addAll(civilCar);
+        return civilCars.addAll(savedCivilCars);
     }
 
     @Override

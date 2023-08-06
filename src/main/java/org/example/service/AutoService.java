@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AutoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoService.class);
@@ -25,17 +27,15 @@ public class AutoService {
     public List<Auto> createAndSaveAutos(int count) {
         List<Auto> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
-            double randomValue = RANDOM.nextDouble() * 10000.0 + 1000.0; // Generate a random value from 1000 to 11000
+            double randomValue = ThreadLocalRandom.current().nextDouble(1000.0, 11000.0); // Generate a random value from 1000 to 11000
             BigDecimal randomPrice = BigDecimal.valueOf(randomValue).setScale(3, RoundingMode.HALF_UP);
-            int randomModel = RANDOM.nextInt(1000);
-            int randomBodyType = RANDOM.nextInt(1000);
-
+            int randomIndex = RANDOM.nextInt(1000);
             final Auto auto = new Auto(
-                    "Model-" + randomModel,
+                    "Model-" + randomIndex,
                     randomPrice,
                     getRandomManufacturer(),
                     getRandomRacingTires(),
-                    "Model-" + randomBodyType);
+                    "Model-" + randomIndex);
             result.add(auto);
             autoRepository.save(auto);
             LOGGER.debug("Created auto {}", auto.getId());
@@ -44,11 +44,7 @@ public class AutoService {
     }
 
     public Auto findOneById(String id) {
-        if (id == null) {
-            return autoRepository.getById("");
-        } else {
-            return autoRepository.getById(id);
-        }
+        return autoRepository.getById(Objects.requireNonNullElse(id, ""));
     }
 
     public Auto update(Auto auto) {
@@ -89,12 +85,12 @@ public class AutoService {
         return values[index];
     }
 
-    public boolean saveAutos(List<Auto> autos) {
-        return autoRepository.saveAll(autos);
+    public boolean saveAutos(List<Auto> savedAutos) {
+        return autoRepository.saveAll(savedAutos);
     }
 
-    public boolean saveAuto(Auto auto) {
-        return autoRepository.save(auto);
+    public boolean saveAuto(Auto savedAuto) {
+        return autoRepository.save(savedAuto);
     }
 
     public void printAll() {

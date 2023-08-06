@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SportCarService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SportCarService.class);
@@ -27,10 +29,11 @@ public class SportCarService {
     public List<SportCar> createAndSaveAutos(int count) {
         List<SportCar> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
-            double randomPriceValue = RANDOM.nextDouble() * 10000.0 + 1000.0; // Generate a random value from 1000 to 11000
-            double randomSpeedValue = RANDOM.nextDouble() * 508.73;// Generate a random value from 0 to 508.73(max civil car speed)
-            int randomYearValue = RANDOM.nextInt(2023 - 1901 + 1) + 1901;// Generate a random value from 1901 to 2023(1901 was first sport car)
-            int randomModel = RANDOM.nextInt(1000);
+
+            double randomPriceValue = ThreadLocalRandom.current().nextDouble(1000.0, 11000.0);
+            double randomSpeedValue = ThreadLocalRandom.current().nextDouble(0, 508.73);// Generate a random value from 0 to 508.73(max civil car speed)
+            int randomYearValue = ThreadLocalRandom.current().nextInt(1901, 2023);// Generate a random value from 1901 to 2023(1901 was first sport car)
+            int randomModel = ThreadLocalRandom.current().nextInt(0, 1000);
 
             BigDecimal randomPrice = BigDecimal.valueOf(randomPriceValue).setScale(3, RoundingMode.HALF_UP);
             BigDecimal randomSpeed = BigDecimal.valueOf(randomSpeedValue).setScale(3, RoundingMode.HALF_UP);
@@ -112,16 +115,12 @@ public class SportCarService {
     }
 
     public SportCar findOneById(String id) {
-        if (id == null) {
-            return sportCarRepository.getById("");
-        } else {
-            return sportCarRepository.getById(id);
-        }
+        return sportCarRepository.getById(Objects.requireNonNullElse(id, ""));
     }
 
     public void printAll() {
         for (SportCar sportCar : sportCarRepository.getAll()) {
-            System.out.println(sportCar);
+            System.out.println(sportCar + " ");
         }
     }
 }
