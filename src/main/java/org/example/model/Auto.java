@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -13,6 +14,19 @@ public class Auto extends Vehicle {
     public Auto(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, String bodyType) {
         super(model, price, manufacturer, racingTires);
         this.bodyType = bodyType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Auto auto = (Auto) o;
+        return Objects.equals(bodyType, auto.bodyType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bodyType);
     }
 
     @Override
@@ -26,4 +40,6 @@ public class Auto extends Vehicle {
                 ", racingTires=" + racingTires +
                 '}';
     }
+
+
 }

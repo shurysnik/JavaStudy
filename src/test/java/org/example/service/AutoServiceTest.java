@@ -11,8 +11,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,6 +28,7 @@ class AutoServiceTest {
     private AutoRepository autoRepository;
     private Auto auto;
     private String autoId;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     public Auto createSimpleAuto() {
         return new Auto("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
@@ -32,6 +36,7 @@ class AutoServiceTest {
 
     @BeforeEach
     void setUp() {
+        System.setOut(new PrintStream(outputStream));
         autoRepository = Mockito.mock(AutoRepository.class);
         target = new AutoService(autoRepository);
         auto = createSimpleAuto();
@@ -166,6 +171,7 @@ class AutoServiceTest {
         final boolean actual = target.delete(null);
         Assertions.assertFalse(actual);
     }
+
     @Test
     void saveAutos() {
         List<Auto> autos = List.of(createSimpleAuto());
@@ -173,6 +179,7 @@ class AutoServiceTest {
         final boolean actual = target.saveAutos(autos);
         Assertions.assertTrue(actual);
     }
+
     @Test
     void saveAutos_null() {
         Mockito.when(autoRepository.saveAll(null)).thenReturn(false);
@@ -180,18 +187,201 @@ class AutoServiceTest {
         Assertions.assertFalse(actual);
         Mockito.verify(autoRepository, times(1)).saveAll(null);
     }
+
+    @Test
+    void ifPresent_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        target.ifPresent(autoId);
+        String expected = "My auto has id" + autoId + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void ifPresent_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        target.ifPresent(null);
+        String expected = "";
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void ifPresent_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        target.ifPresent("nonExistId");
+        String expected = "";
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void orElse_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        Auto expected = target.orElse(autoId);
+        Assertions.assertEquals(expected, auto);
+    }
+
+    @Test
+    void orElse_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        Auto expected = target.orElse(null);
+        Assertions.assertEquals(expected, auto);
+        Assertions.assertNotEquals(expected.getId(), auto.getId());
+    }
+
+    @Test
+    void orElse_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        Auto expected = target.orElse("nonExistId");
+        Assertions.assertEquals(expected, auto);
+        Assertions.assertNotEquals(expected.getId(), auto.getId());
+    }
+
+    @Test
+    void orElseGet_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        Auto actual = new Auto("newModel", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
+        Auto expected = target.orElseGet(autoId);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void orElseGet_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        Auto actual = new Auto("newModel", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
+        Auto expected = target.orElseGet(null);
+        Assertions.assertEquals(expected, actual);
+        Assertions.assertNotEquals(expected.getId(), actual.getId());
+    }
+
+    @Test
+    void orElseGet_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        Auto actual = new Auto("newModel", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
+        Auto expected = target.orElseGet("nonExistId");
+        Assertions.assertEquals(expected, actual);
+        Assertions.assertNotEquals(expected.getId(), actual.getId());
+    }
+
+    @Test
+    void map_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        target.map(autoId);
+        String expected = auto.getModel().toUpperCase() + System.lineSeparator();
+        Assertions.assertEquals("model" + expected, outputStream.toString());
+    }
+
+    @Test
+    void map_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        target.map(null);
+        String expected = "I don't found auto with this id" + null + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void map_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        target.map("nonExistId");
+        String expected = "I don't found auto with this id" + "nonExistId" + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void ifPresentOrElse_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        target.ifPresentOrElse(autoId);
+        String expected = "our auto has model" + auto.getModel() + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void ifPresentOrElse_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        target.ifPresentOrElse(null);
+        String expected = "I don't found auto with this id" + null + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void ifPresentOrElse_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        target.ifPresentOrElse("nonExistId");
+        String expected = "I don't found auto with this id" + "nonExistId" + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+
+    @Test
+    void filter_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        target.filter(autoId);
+        String expected = "My bodyType" + auto.getBodyType() + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void filter_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        target.filter(null);
+        String expected = "I don't found auto with this id" + null + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void filter_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        target.filter("nonExistId");
+        String expected = "I don't found auto with this id" + "nonExistId" + System.lineSeparator();
+        Assertions.assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    void orElseThrow_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        Auto expected = target.orElseThrow(autoId);
+        Assertions.assertEquals(expected, auto);
+    }
+
+    @Test
+    void orElseThrow_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> target.orElseThrow(null),
+                "I don't found auto with this id" + autoId + System.lineSeparator());
+    }
+
+    @Test
+    void orElseThrow_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> target.orElseThrow("nonExistId"),
+                "I don't found auto with this id" + autoId + System.lineSeparator());
+    }
+
+    ///   public void or(String id) {
+//        autoRepository.findById(id).or(() -> Optional.of(createSimpleAuto()));
+//    }
+    @Test
+    void or_success() {
+        Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
+        target.or(autoId);
+        Auto expected = createSimpleAuto();
+        Assertions.assertEquals(expected, auto);
+    }
+
+    @Test
+    void or_failByNull() {
+        Mockito.when(autoRepository.findById(null)).thenReturn(Optional.empty());
+        target.or(null);
+        Auto expected = createSimpleAuto();
+        Assertions.assertEquals(expected, auto);
+    }
+
+    @Test
+    void or_failByNonExistId() {
+        Mockito.when(autoRepository.findById("nonExistId")).thenReturn(Optional.empty());
+        target.or("nonExistId");
+        Auto expected = createSimpleAuto();
+        Assertions.assertEquals(expected, auto);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

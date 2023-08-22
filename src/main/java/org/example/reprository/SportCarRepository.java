@@ -5,6 +5,7 @@ import org.example.model.SportCar;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class SportCarRepository implements CrudRepository<SportCar> {
     private final List<SportCar> sportCars;
@@ -21,6 +22,16 @@ public class SportCarRepository implements CrudRepository<SportCar> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Optional<SportCar> findById(String id) {
+        for (SportCar sportCar : sportCars) {
+            if (sportCar.getId().equals(id)) {
+                return Optional.of(sportCar);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

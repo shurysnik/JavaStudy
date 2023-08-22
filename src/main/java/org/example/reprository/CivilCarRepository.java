@@ -1,10 +1,12 @@
 package org.example.reprository;
 
+import org.example.model.Auto;
 import org.example.model.CivilCar;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class CivilCarRepository implements CrudRepository<CivilCar> {
     public final List<CivilCar> civilCars;
@@ -21,6 +23,16 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Optional<CivilCar> findById(String id) {
+        for (CivilCar civilCar : civilCars) {
+            if (civilCar.getId().equals(id)) {
+                return Optional.of(civilCar);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
