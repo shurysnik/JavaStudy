@@ -355,15 +355,12 @@ class AutoServiceTest {
                 "I don't found auto with this id" + autoId + System.lineSeparator());
     }
 
-    ///   public void or(String id) {
-//        autoRepository.findById(id).or(() -> Optional.of(createSimpleAuto()));
-//    }
     @Test
     void or_success() {
         Mockito.when(autoRepository.findById(autoId)).thenReturn(Optional.of(createSimpleAuto()));
-        target.or(autoId);
+        Optional<Auto> actual = target.or(autoId);
         Auto expected = createSimpleAuto();
-        Assertions.assertEquals(expected, auto);
+        Assertions.assertEquals(expected, actual.get());
     }
 
     @Test
@@ -382,26 +379,3 @@ class AutoServiceTest {
         Assertions.assertEquals(expected, auto);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

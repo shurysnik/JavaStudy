@@ -25,22 +25,28 @@ public class SportCarService {
         this.sportCarRepository = sportCarRepository;
     }
 
+    private static BigDecimal generateRandomValue(double minValue, double maxValue) {
+        return BigDecimal.valueOf(ThreadLocalRandom.current().nextDouble(minValue, maxValue));
+    }
+
+    private static int generateRandomInt(int minValue, int maxValue) {
+        return ThreadLocalRandom.current().nextInt(minValue, maxValue);
+    }
+
+    private static BigDecimal roundValue(BigDecimal value) {
+        return value.setScale(3, RoundingMode.HALF_UP);
+    }
 
     public List<SportCar> createAndSaveAutos(int count) {
         List<SportCar> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
-
-            double randomPriceValue = ThreadLocalRandom.current().nextDouble(1000.0, 11000.0);
-            double randomSpeedValue = ThreadLocalRandom.current().nextDouble(0, 508.73);// Generate a random value from 0 to 508.73(max civil car speed)
-            int randomYearValue = ThreadLocalRandom.current().nextInt(1901, 2023);// Generate a random value from 1901 to 2023(1901 was first sport car)
-            int randomModel = ThreadLocalRandom.current().nextInt(0, 1000);
-
-            BigDecimal randomPrice = BigDecimal.valueOf(randomPriceValue).setScale(3, RoundingMode.HALF_UP);
-            BigDecimal randomSpeed = BigDecimal.valueOf(randomSpeedValue).setScale(3, RoundingMode.HALF_UP);
-
+            int randomYearValue = generateRandomInt(1901, 2023);
+            int randomModel = generateRandomInt(0, 1000);
+            BigDecimal randomValue = roundValue(generateRandomValue(1000.0, 11000.0));
+            BigDecimal randomSpeed = roundValue(generateRandomValue(0, 508.73));
             final SportCar auto = new SportCar(
                     "Model-" + randomModel,
-                    randomPrice,
+                    randomValue,
                     getRandomManufacturer(),
                     getRandomRacingTires(),
                     randomSpeed,

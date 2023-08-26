@@ -16,12 +16,11 @@ public class AutoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoService.class);
     private static final Random RANDOM = new Random();
     private final AutoRepository autoRepository;
-    private static final String MASSAGE = "I don't found auto with this id";
+    private static final String AUTO_NOT_FOUND_MESSAGE = "I don't found auto with this id";
 
     public Auto createSimpleAuto() {
         return new Auto("Model-", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
     }
-
 
     public AutoService(AutoRepository autoRepository) {
         this.autoRepository = autoRepository;
@@ -118,36 +117,34 @@ public class AutoService {
             System.out.println("We create new auto");
             String newModel = "newModel";
             System.out.println("Auto has new model " + newModel);
+            System.out.println("Auto with this id " + id + " was successfully created ");
             return new Auto(newModel, BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
         });
-        System.out.println("Auto with this id " + id + " was successfully created ");
         return foundAuto;
     }
 
     public void map(String id) {
         autoRepository.findById(id).map(auto -> auto.getModel().toUpperCase())
                 .ifPresentOrElse(model -> System.out.println("model" + model),
-                        () -> System.out.println(MASSAGE + id));
+                        () -> System.out.println(AUTO_NOT_FOUND_MESSAGE + id));
     }
 
     public void ifPresentOrElse(String id) {
         autoRepository.findById(id).ifPresentOrElse(auto -> System.out.println("our auto has model" + auto.getModel())
-                , () -> System.out.println(MASSAGE + id));
+                , () -> System.out.println(AUTO_NOT_FOUND_MESSAGE + id));
     }
 
     public Auto orElseThrow(String id) {
-        Auto auto = autoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(MASSAGE + id));
-        return auto;
+        return autoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(AUTO_NOT_FOUND_MESSAGE + id));
     }
 
-    public void or(String id) {
-        autoRepository.findById(id).or(() -> Optional.of(createSimpleAuto()));
+    public Optional<Auto> or(String id) {
+        return autoRepository.findById(id).or(() -> Optional.of(createSimpleAuto()));
     }
 
     public void filter(String id) {
         autoRepository.findById(id).filter(auto -> auto.getBodyType().startsWith("T"))
                 .ifPresentOrElse(auto -> System.out.println("My bodyType" + auto.getBodyType()),
-                        () -> System.out.println(MASSAGE + id));
+                        () -> System.out.println(AUTO_NOT_FOUND_MESSAGE + id));
     }
-
 }
