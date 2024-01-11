@@ -1,6 +1,5 @@
 package org.example.reprository;
 
-import org.example.model.Auto;
 import org.example.model.CivilCar;
 
 import java.math.BigDecimal;

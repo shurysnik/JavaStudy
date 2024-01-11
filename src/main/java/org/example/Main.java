@@ -8,7 +8,6 @@ import org.example.service.AutoService;
 import org.example.service.CivilCarService;
 import org.example.service.SportCarService;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Main {
