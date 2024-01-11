@@ -28,7 +28,7 @@ class AutoRepositoryTest {
     }
 
     public Auto createSimpleAuto() {
-        return new Auto("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type");
+        return new Auto("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, "Type",1);
     }
 
     @Test

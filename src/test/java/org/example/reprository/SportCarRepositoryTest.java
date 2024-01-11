@@ -21,7 +21,7 @@ class SportCarRepositoryTest {
 
     public SportCar createSimpleSportCar() {
         return new SportCar("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI,
-                RacingTires.RACING, BigDecimal.ZERO, 2000, Color.BLACK);
+                RacingTires.RACING, BigDecimal.ZERO, 2000, Color.BLACK,1);
     }
 
     @BeforeEach

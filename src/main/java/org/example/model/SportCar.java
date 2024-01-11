@@ -12,8 +12,8 @@ public class SportCar extends Vehicle {
     private int year;
     private Color color;
 
-    public SportCar(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, BigDecimal speed, int year, Color color) {
-        super(model, price, manufacturer, racingTires);
+    public SportCar(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, BigDecimal speed, int year, Color color,int count ) {
+        super(model, price, manufacturer, racingTires,count);
         this.speed = speed;
         this.year = year;
         this.color = color;
@@ -30,6 +30,7 @@ public class SportCar extends Vehicle {
                 ", price=" + price +
                 ", manufacturer=" + manufacturer +
                 ", racingTires=" + racingTires +
+                ", count=" + count +
                 '}';
     }
 }

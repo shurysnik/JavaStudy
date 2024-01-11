@@ -11,8 +11,8 @@ import java.util.Objects;
 public class Auto extends Vehicle {
     private String bodyType;
 
-    public Auto(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, String bodyType) {
-        super(model, price, manufacturer, racingTires);
+    public Auto(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, String bodyType,int count ) {
+        super(model, price, manufacturer, racingTires,count);
         this.bodyType = bodyType;
     }
 
@@ -38,6 +38,7 @@ public class Auto extends Vehicle {
                 ", price=" + price +
                 ", manufacturer=" + manufacturer +
                 ", racingTires=" + racingTires +
+                ", count=" + count +
                 '}';
     }
 

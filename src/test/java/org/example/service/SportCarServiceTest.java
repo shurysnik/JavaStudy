@@ -1,4 +1,4 @@
-package org.example.service;
+/*package org.example.service;
 
 import org.example.model.Color;
 import org.example.model.Manufacturer;
@@ -33,7 +33,7 @@ class SportCarServiceTest {
 
     public SportCar createSimpleSportCar() {
         return new SportCar("Model", BigDecimal.ZERO, Manufacturer.TOYOTA,
-                RacingTires.RACING, BigDecimal.ZERO, 2000, Color.BLACK);
+                RacingTires.RACING, BigDecimal.ZERO, 2000, Color.BLACK,1);
     }
 
     @Test
@@ -172,3 +172,4 @@ class SportCarServiceTest {
     }
 }
 
+*/

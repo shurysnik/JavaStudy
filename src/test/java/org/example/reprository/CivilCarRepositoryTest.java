@@ -28,7 +28,7 @@ class CivilCarRepositoryTest {
     }
 
     public CivilCar createSimpleCivilCar() {
-        return new CivilCar("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, 0.0, FuelType.PETROL);
+        return new CivilCar("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI, RacingTires.RACING, 0.0, FuelType.PETROL,1);
     }
 
     @Test

@@ -1,8 +1,5 @@
 package org.example.reprository;
 
-
-import org.example.model.Auto;
-
 import java.util.List;
 import java.util.Optional;
 

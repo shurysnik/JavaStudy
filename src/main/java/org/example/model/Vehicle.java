@@ -14,12 +14,14 @@ public abstract class Vehicle {
     protected BigDecimal price;
     protected Manufacturer manufacturer;
     protected RacingTires racingTires;
+    protected int count;
 
-    protected Vehicle(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires) {
+    protected Vehicle(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires,int count) {
         this.id = UUID.randomUUID().toString();
         this.model = model;
         this.price = price;
         this.manufacturer = manufacturer;
         this.racingTires = racingTires;
+        this.count=count;
     }
 }
