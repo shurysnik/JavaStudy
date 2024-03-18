@@ -1,6 +1,9 @@
 package org.example.service;
 
-import org.example.model.*;
+import org.example.model.FuelType;
+import org.example.model.Manufacturer;
+import org.example.model.RacingTires;
+import org.example.model.Vehicle;
 import org.example.reprository.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +16,16 @@ import java.util.Objects;
 import java.util.Random;
 
 public abstract class VehicleService<T extends Vehicle> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VehicleService.class);
     protected static final Random RANDOM = new Random();
+    private static final Logger LOGGER = LoggerFactory.getLogger(VehicleService.class);
     protected final CrudRepository<T> repository;
 
     protected VehicleService(CrudRepository<T> repository) {
         this.repository = repository;
+    }
+
+    protected static BigDecimal roundValue(BigDecimal value) {
+        return value.setScale(3, RoundingMode.HALF_UP);
     }
 
     public List<T> createAndSaveAutos(int count) {
@@ -27,7 +34,7 @@ public abstract class VehicleService<T extends Vehicle> {
             final T vehicle = create();
             result.add(vehicle);
             repository.save(vehicle);
-            LOGGER.debug("Created vehicle {}", vehicle.getId());
+            LOGGER.info("Created vehicle {}", vehicle.getId());
         }
         return result;
     }
@@ -64,17 +71,12 @@ public abstract class VehicleService<T extends Vehicle> {
         return repository.delete(vehicle);
     }
 
-
-    public boolean save(List<T> savedVehicles) {
+    public boolean saveAll(List<T> savedVehicles) {
         return repository.saveAll(savedVehicles);
     }
 
     public boolean save(T savedVehicle) {
         return repository.save(savedVehicle);
-    }
-
-    protected static BigDecimal roundValue(BigDecimal value) {
-        return value.setScale(3, RoundingMode.HALF_UP);
     }
 
     protected double generateRandomValue(double min, double max) {

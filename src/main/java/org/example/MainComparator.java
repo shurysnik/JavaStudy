@@ -2,18 +2,19 @@ package org.example;
 
 import org.example.model.Auto;
 import org.example.model.Vehicle;
-import org.example.reprository.AutoRepository;
 import org.example.service.AutoService;
 import org.example.service.VehicleService;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class MainComparator {
 
     public static void main(String[] args) {
 
-        AutoRepository autoRepository = new AutoRepository();
-        VehicleService<Auto> vehicleService = new AutoService(autoRepository);
+        VehicleService<Auto> vehicleService = AutoService.getInstance();
         List<Auto> savedAutos = vehicleService.createAndSaveAutos(500);
         Comparator<Auto> comparatorByPrice = Comparator.comparing(Vehicle::getPrice);
         Comparator<Auto> comparatorByModel = Comparator.comparing(Vehicle::getModel);
@@ -24,8 +25,7 @@ public class MainComparator {
                 .thenComparing(comparatorByCount);
         Set<Auto> uniqueAutos = new TreeSet<>(comparator);
         uniqueAutos.addAll(savedAutos);
-        for (Auto auto : uniqueAutos) {
-            System.out.println(auto);
-        }
+
+
     }
 }

@@ -1,8 +1,8 @@
 package org.example.service;
 
 import org.example.model.Auto;
+import org.example.reprository.AutoRepository;
 import org.example.reprository.CrudRepository;
-
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,17 +10,27 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AutoService extends VehicleService<Auto> {
 
-    public AutoService(CrudRepository<Auto> repository) {
+    private static AutoService instance;
+
+    private AutoService(CrudRepository<Auto> repository) {
         super(repository);
     }
 
+    public static AutoService getInstance() {
+        if (instance == null) {
+            instance = new AutoService(AutoRepository.getInstance());
+        }
+        return instance;
+    }
+
     @Override
-    protected Auto create() {
+    public Auto create() {
         double randomValue = ThreadLocalRandom.current().nextDouble(1000.0, 11000.0); // Generate a random value from 1000 to 11000
         BigDecimal randomPrice = BigDecimal.valueOf(randomValue).setScale(3, RoundingMode.HALF_UP);
         int randomIndex = RANDOM.nextInt(1000);
         return new Auto("Model-" + randomIndex, randomPrice, getRandomManufacturer(), getRandomRacingTires(), "Model-" + randomIndex, 1);
     }
+
     public void getTotalSumOf(String id) {
         repository.findById(id).ifPresent(vehicle -> {
             final int count = vehicle.getCount();

@@ -11,8 +11,8 @@ public class CivilCar extends Vehicle {
     private double fuelConsumption;
     private FuelType fuelType;
 
-    public CivilCar(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, double fuelConsumption, FuelType fuelType,int count) {
-        super(model, price, manufacturer, racingTires,count);
+    public CivilCar(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, double fuelConsumption, FuelType fuelType, int count) {
+        super(model, price, manufacturer, racingTires, count, VehicleType.CIVIL);
         this.fuelConsumption = fuelConsumption;
         this.fuelType = fuelType;
     }
