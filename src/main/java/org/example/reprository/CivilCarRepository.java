@@ -8,10 +8,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class CivilCarRepository implements CrudRepository<CivilCar> {
+    private static CivilCarRepository instance;
     public final List<CivilCar> civilCars;
 
-    public CivilCarRepository() {
+    private CivilCarRepository() {
         civilCars = new LinkedList<>();
+    }
+
+    public static CivilCarRepository getInstance() {
+        if (instance == null) {
+            instance = new CivilCarRepository();
+        }
+        return instance;
     }
 
     @Override
