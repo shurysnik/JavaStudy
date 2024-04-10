@@ -8,30 +8,25 @@ import java.util.List;
 import java.util.Optional;
 
 public class CivilCarRepository implements CrudRepository<CivilCar> {
+    private static CivilCarRepository instance;
     public final List<CivilCar> civilCars;
 
-    public CivilCarRepository() {
+    private CivilCarRepository() {
         civilCars = new LinkedList<>();
     }
 
-    @Override
-    public CivilCar getById(String id) {
-        for (CivilCar civilCar : civilCars) {
-            if (civilCar.getId().equals(id)) {
-                return civilCar;
-            }
+    public static CivilCarRepository getInstance() {
+        if (instance == null) {
+            instance = new CivilCarRepository();
         }
-        return null;
+        return instance;
     }
 
     @Override
     public Optional<CivilCar> findById(String id) {
-        for (CivilCar civilCar : civilCars) {
-            if (civilCar.getId().equals(id)) {
-                return Optional.of(civilCar);
-            }
-        }
-        return Optional.empty();
+        return civilCars.stream()
+                .filter(civilCar -> civilCar.getId().equals(id))
+                .findAny();
     }
 
     @Override
@@ -59,23 +54,12 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
     }
 
     @Override
-    public boolean update(CivilCar auto) {
-        final CivilCar founded = getById(auto.getId());
-        if (founded != null) {
-            CivilCarCopy.copy(auto, founded);
-            return true;
-        }
-        return false;
+    public void update(CivilCar auto) {
+        Optional<CivilCar> optionalAuto = findById(auto.getId());
+        optionalAuto.ifPresentOrElse(founded -> CivilCarCopy.copy(auto, founded),
+                () -> save(auto));
     }
 
-    public boolean updateByModel(String model, CivilCar copyFrom) {
-        for (CivilCar civilCar : civilCars) {
-            if (civilCar.getModel().equals(model)) {
-                CivilCarRepository.CivilCarCopy.copy(copyFrom, civilCar);
-            }
-        }
-        return true;
-    }
 
     @Override
     public boolean deleteById(String id) {
@@ -85,6 +69,10 @@ public class CivilCarRepository implements CrudRepository<CivilCar> {
     @Override
     public boolean delete(CivilCar civilCar) {
         return civilCars.remove(civilCar);
+    }
+
+    public void resetForTest() {
+        civilCars.clear();
     }
 
     private static class CivilCarCopy {

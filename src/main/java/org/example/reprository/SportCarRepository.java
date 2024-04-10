@@ -8,30 +8,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class SportCarRepository implements CrudRepository<SportCar> {
+    public static SportCarRepository instance;
     private final List<SportCar> sportCars;
 
-    public SportCarRepository() {
+
+    private SportCarRepository() {
         sportCars = new LinkedList<>();
     }
 
-    @Override
-    public SportCar getById(String id) {
-        for (SportCar sportCar : sportCars) {
-            if (sportCar.getId().equals(id)) {
-                return sportCar;
-            }
+    public static SportCarRepository getInstance() {
+        if (instance == null) {
+            instance = new SportCarRepository();
         }
-        return null;
+        return instance;
     }
 
     @Override
     public Optional<SportCar> findById(String id) {
-        for (SportCar sportCar : sportCars) {
-            if (sportCar.getId().equals(id)) {
-                return Optional.of(sportCar);
-            }
-        }
-        return Optional.empty();
+        return sportCars.stream()
+                .filter(sportCar -> sportCar.getId().equals(id))
+                .findAny();
     }
 
     @Override
@@ -59,22 +55,10 @@ public class SportCarRepository implements CrudRepository<SportCar> {
     }
 
     @Override
-    public boolean update(SportCar auto) {
-        final SportCar founded = getById(auto.getId());
-        if (founded != null) {
-            SportCarCopy.copy(auto, founded);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean updateByYear(int year, SportCar copyFrom) {
-        for (SportCar sportCar : sportCars) {
-            if (sportCar.getYear() == year) {
-                SportCarRepository.SportCarCopy.copy(copyFrom, sportCar);
-            }
-        }
-        return true;
+    public void update(SportCar auto) {
+        Optional<SportCar> optionalAuto = findById(auto.getId());
+        optionalAuto.ifPresentOrElse(founded -> SportCarCopy.copy(auto, founded),
+                () -> save(auto));
     }
 
     @Override
@@ -85,6 +69,10 @@ public class SportCarRepository implements CrudRepository<SportCar> {
     @Override
     public boolean delete(SportCar sportCar) {
         return sportCars.remove(sportCar);
+    }
+
+    public void resetForTest() {
+        sportCars.clear();
     }
 
     private static class SportCarCopy {

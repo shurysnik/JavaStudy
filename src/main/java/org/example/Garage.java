@@ -7,6 +7,7 @@ import org.example.model.Vehicle;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 
+
 @Getter
 @Setter
 public class Garage<T extends Vehicle> implements Iterable<T> {
@@ -36,7 +37,7 @@ public class Garage<T extends Vehicle> implements Iterable<T> {
         --size;
     }
 
-    public void replace(int index, T element) {
+    public void set(int index, T element) {
         Node<T> foundNode = getNode(index);
         foundNode.element = element;
         foundNode.numberRestyling++;
@@ -105,27 +106,19 @@ public class Garage<T extends Vehicle> implements Iterable<T> {
         return new GarageIterator();
     }
 
-    private class GarageIterator implements Iterator<T> {
-
-        Node<T> current = first;
-
-        @Override
-        public boolean hasNext() {
-            return current != null;
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[").append(System.lineSeparator());
+        for (Node<T> current = first; current != null; current = current.next) {
+            stringBuilder
+                    .append(current.element)
+                    .append(",")
+                    .append(System.lineSeparator());
         }
-
-        @Override
-        public T next() {
-            if (!hasNext()) {
-                throw new IllegalStateException("No more elements in the iteration.");
-            }
-            T element = current.element;
-            current = current.next;
-            return element;
-        }
-
+        stringBuilder.append("]");
+        return stringBuilder.toString();
     }
-
 
     private static class Node<T> {
         Node<T> next;
@@ -144,18 +137,24 @@ public class Garage<T extends Vehicle> implements Iterable<T> {
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[").append(System.lineSeparator());
-        for (Node<T> current = first; current != null; current = current.next) {
-            stringBuilder
-                    .append(current.element)
-                    .append(",")
-                    .append(System.lineSeparator());
+    private class GarageIterator implements Iterator<T> {
+
+        Node<T> current = first;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
         }
-        stringBuilder.append("]");
-        return stringBuilder.toString();
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new IllegalStateException("No more elements in the iteration.");
+            }
+            T element = current.element;
+            current = current.next;
+            return element;
+        }
     }
 }
 

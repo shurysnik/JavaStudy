@@ -1,17 +1,16 @@
 package org.example.reprository;
 
-import org.example.model.Color;
-import org.example.model.Manufacturer;
-import org.example.model.RacingTires;
-import org.example.model.SportCar;
+import org.example.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class SportCarRepositoryTest {
 
@@ -19,183 +18,164 @@ class SportCarRepositoryTest {
     private SportCar sportCar;
     private String sportCarId;
 
-    public SportCar createSimpleSportCar() {
-        return new SportCar("Model", BigDecimal.ZERO, Manufacturer.HYUNDAI,
-                RacingTires.RACING, BigDecimal.ZERO, 2000, Color.BLACK,1);
-    }
-
     @BeforeEach
     void setUp() {
-        target = new SportCarRepository();
-        sportCar = createSimpleSportCar();
-        target.save(sportCar);
+        target = SportCarRepository.getInstance();
+        sportCar = createSimpleAuto();
         sportCarId = sportCar.getId();
+        target.resetForTest();
+    }
+
+    public SportCar createSimpleAuto() {
+        return new SportCar("model", BigDecimal.ZERO, Manufacturer.AUDI,
+                RacingTires.RAIN, BigDecimal.ZERO, 2000, Color.BLACK, 1);
     }
 
     @Test
-    void getById_findOne() {
-        final SportCar actual = target.getById(sportCarId);
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(actual.getId(), sportCarId);
+    void getInstance() {
+        SportCarRepository firstInstance = SportCarRepository.getInstance();
+        Assertions.assertNotNull(firstInstance);
+        SportCarRepository secondInstance = SportCarRepository.getInstance();
+        Assertions.assertSame(firstInstance, secondInstance);
+        Assertions.assertEquals(firstInstance, secondInstance);
     }
 
     @Test
-    void getById_notFindNull() {
-        final SportCar actual = target.getById(null);
-        Assertions.assertNull(actual);
-    }
-
-    @Test
-    void getById_notFindNothing() {
-        final SportCar actual = target.getById("nothing");
-        Assertions.assertNull(actual);
-    }
-
-    @Test
-    void getById_manySportCars() {
-        final SportCar otherSportCarAuto = createSimpleSportCar();
-        final SportCar actualFirstSportCarAuto = target.getById(sportCarId);
-        Assertions.assertNotNull(actualFirstSportCarAuto);
-
-        final boolean savedSportCarAuto = target.save(otherSportCarAuto);
-        Assertions.assertTrue(savedSportCarAuto);
-
-        final SportCar actualSecondSportCarAuto = target.getById(otherSportCarAuto.getId());
-        Assertions.assertNotNull(actualSecondSportCarAuto);
-
-        Assertions.assertEquals(actualFirstSportCarAuto.getId(), sportCarId);
-        Assertions.assertNotEquals(actualFirstSportCarAuto.getId(), otherSportCarAuto.getId());
-
-        Assertions.assertEquals(actualSecondSportCarAuto.getId(), otherSportCarAuto.getId());
-        Assertions.assertNotEquals(actualSecondSportCarAuto.getId(), sportCarId);
-
-    }
-
-    @Test
-    void getAll() {
-        final List<SportCar> actual = target.getAll();
-        final int expectedOne = 1;
-        final int expectedTwo = 2;
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(expectedOne, actual.size());
-        target.saveAll(actual);
-        Assertions.assertEquals(expectedTwo, actual.size());
-    }
-
-    @Test
-    void getAll_NotEmptyList() {
-        final List<SportCar> actual = target.getAll();
-        Assertions.assertNotNull(actual);
-        final List<SportCar> expected = new LinkedList<>();
-        Assertions.assertNotEquals(actual, expected);
-
-    }
-
-    @Test
-    void getAll_EmptyList() {
-        target.delete(sportCar);
-        final List<SportCar> actual = target.getAll();
-        Assertions.assertNotNull(actual);
-        final List<SportCar> expected = new LinkedList<>();
-        Assertions.assertEquals(actual, expected);
-    }
-
-    @Test
-    void getAll_checkListSize() {
-        final List<SportCar> actual = target.getAll();
-        Assertions.assertNotNull(actual);
-        final int expectedSize = 1;
-        Assertions.assertEquals(expectedSize, actual.size());
-
-    }
-
-    @Test
-    void save_success() {
-        final boolean actual = target.save(sportCar);
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
-    void save_fail() {
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> target.save(null));
-    }
-
-    @Test
-    void save_success_changePrice() {
-        Assertions.assertEquals(BigDecimal.valueOf(-1), sportCar.getPrice());
-    }
-
-    @Test
-    void save_success_notChangePrice() {
-        sportCar.setPrice(BigDecimal.TEN);
+    void findById_saved() {
         target.save(sportCar);
-        final SportCar expected = target.getById(sportCarId);
-        Assertions.assertNotNull(expected);
-        Assertions.assertEquals(expected.getPrice(), sportCar.getPrice());
+        Optional<SportCar> foundedById = target.findById(sportCarId);
+        assertTrue(foundedById.isPresent());
+        Assertions.assertEquals(foundedById.get(), sportCar);
     }
 
     @Test
-    void saveAll() {
-        final boolean actual = target.saveAll(List.of(createSimpleSportCar()));
-        Assertions.assertTrue(actual);
+    void findById_notSaved() {
+        Optional<SportCar> foundedById = target.findById(sportCarId);
+        Assertions.assertEquals(foundedById, Optional.empty());
+    }
+
+    @Test
+    void findById_savedNull() {
+        Optional<SportCar> foundedById = target.findById(null);
+        assertFalse(foundedById.isPresent());
+    }
+
+    @Test
+    void getAll_emptyList() {
+        List<SportCar> actual = target.getAll();
+        List<SportCar> expected = new LinkedList<>();
+        assertEquals(actual, expected);
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void getAll_notEmptyList() {
+        List<SportCar> actual = target.getAll();
+        target.save(sportCar);
+        List<SportCar> expected = new LinkedList<>();
+        expected.add(sportCar);
+        assertEquals(actual, expected);
+        int expectedSize = 1;
+        assertFalse(actual.isEmpty());
+        assertEquals(actual.size(), expectedSize);
+        target.save(sportCar);
+        expectedSize = 2;
+        assertEquals(actual.size(), expectedSize);
+    }
+
+    @Test
+    void save_null() {
+        String message = "Sport car must not be null";
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> target.save(null), message);
+    }
+
+    @Test
+    void save_checkSize() {
+        sportCar.setPrice(BigDecimal.ZERO);
+        boolean save = target.save(sportCar);
+        assertTrue(save);
+        BigDecimal expectedPrice = BigDecimal.valueOf(-1);
+        BigDecimal actual = sportCar.getPrice();
+        assertEquals(actual, expectedPrice);
+        assertTrue(target.getAll().contains(sportCar));
     }
 
     @Test
     void saveAll_null() {
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> target.saveAll(null));
+        String message = "Sport car must not be null";
+        assertThrows(IllegalArgumentException.class, () -> target.saveAll(null), message);
+        int actual = 0;
+        assertEquals(target.getAll().size(), actual);
+        assertTrue(target.getAll().isEmpty());
     }
 
     @Test
-    void saveAll_emptyList() {
-        final boolean actual = target.saveAll(Collections.emptyList());
-        Assertions.assertFalse(actual);
-    }
-
-    @Test
-    void update_notFound() {
-        boolean actual = target.update(createSimpleSportCar());
-        Assertions.assertFalse(actual);
+    void saveAll() {
+        int expectedSize = 1;
+        boolean actual = target.saveAll(List.of(sportCar));
+        assertTrue(actual);
+        assertEquals(target.getAll().size(), expectedSize);
     }
 
     @Test
     void update() {
-        sportCar.setPrice(BigDecimal.TEN);
-        final boolean actual = target.update(sportCar);
-        Assertions.assertTrue(actual);
-        final SportCar expected = target.getById(sportCarId);
-        Assertions.assertNotNull(expected);
-        Assertions.assertEquals(expected.getPrice(), sportCar.getPrice());
+        SportCar updatedSportCar = new SportCar("newModel", BigDecimal.ONE,
+                Manufacturer.MAZDA, RacingTires.ROAD, BigDecimal.valueOf(240),
+                2000, Color.YELLOW, 2);
+        target.save(updatedSportCar);
+        target.update(updatedSportCar);
+        Optional<SportCar> foundedAuto = target.findById(updatedSportCar.getId());
+        assertTrue(foundedAuto.isPresent());
+        String newModel = "newModel";
+        BigDecimal newPrice = BigDecimal.ONE;
+        Manufacturer newManufacturer = Manufacturer.MAZDA;
+        RacingTires newRacingTires = RacingTires.ROAD;
+        BigDecimal newSpeed = BigDecimal.valueOf(240);
+        int newYear = 2000;
+        Color newColor = Color.YELLOW;
+        int newCount = 2;
+        assertEquals(newModel, foundedAuto.get().getModel());
+        assertEquals(newPrice, foundedAuto.get().getPrice());
+        assertEquals(newManufacturer, foundedAuto.get().getManufacturer());
+        assertEquals(newSpeed, foundedAuto.get().getSpeed());
+        assertEquals(newYear, foundedAuto.get().getYear());
+        assertEquals(newColor, foundedAuto.get().getColor());
+        assertEquals(newRacingTires, foundedAuto.get().getRacingTires());
+        assertEquals(newCount, foundedAuto.get().getCount());
     }
 
     @Test
-    void updateByYear() {
-        final SportCar otherSportCar = createSimpleSportCar();
-        Assertions.assertNotNull(otherSportCar);
-        sportCar.setPrice(BigDecimal.TEN);
-        sportCar.setManufacturer(Manufacturer.TOYOTA);
-        final boolean actual = target.updateByYear(otherSportCar.getYear(), sportCar);
-        Assertions.assertTrue(actual);
-        Assertions.assertEquals(otherSportCar.getYear(), sportCar.getYear());
-        Assertions.assertNotEquals(otherSportCar.getManufacturer(), sportCar.getManufacturer());
+    void deleteById_null() {
+        target.save(sportCar);
+        int expectedSize = 1;
+        boolean actual = target.deleteById(null);
+        assertFalse(actual);
+        assertEquals(expectedSize, target.getAll().size());
+    }
+
+    @Test
+    void deleteById() {
+        target.save(sportCar);
+        boolean actual = target.deleteById(sportCarId);
+        assertTrue(actual);
+        assertTrue(target.getAll().isEmpty());
+    }
+
+    @Test
+    void delete_null() {
+        target.save(sportCar);
+        int expectedSize = 1;
+        boolean actual = target.delete(null);
+        assertFalse(actual);
+        assertEquals(expectedSize, target.getAll().size());
     }
 
     @Test
     void delete() {
-        final boolean actual = target.deleteById(sportCarId);
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
-    void delete_fail() {
-        final boolean actual = target.deleteById("nothing");
-        Assertions.assertFalse(actual);
-    }
-
-    @Test
-    void deleteSportCar() {
-        final boolean actual = target.delete(sportCar);
-        Assertions.assertTrue(actual);
+        target.save(sportCar);
+        boolean actual = target.delete(sportCar);
+        assertTrue(actual);
+        assertTrue(target.getAll().isEmpty());
     }
 }

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CrudRepository<T> {
-    T getById(String id);
 
     Optional<T> findById(String id);
 
@@ -14,7 +13,7 @@ public interface CrudRepository<T> {
 
     boolean saveAll(List<T> auto);
 
-    boolean update(T auto);
+    void update(T auto);
 
     boolean deleteById(String id);
 

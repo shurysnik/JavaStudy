@@ -9,29 +9,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class AutoRepository implements CrudRepository<Auto> {
+    private static AutoRepository instance;
     private final List<Auto> autos;
 
-    public AutoRepository() {
+    private AutoRepository() {
         autos = new LinkedList<>();
     }
 
-    @Override
-    public Auto getById(String id) {
-        for (Auto auto : autos) {
-            if (auto.getId().equals(id)) {
-                return auto;
-            }
+    public static AutoRepository getInstance() {
+        if (instance == null) {
+            instance = new AutoRepository();
         }
-        return null;
+        return instance;
     }
 
     public Optional<Auto> findById(String id) {
-        for (Auto auto : autos) {
-            if (auto.getId().equals(id)) {
-                return Optional.of(auto);
-            }
-        }
-        return Optional.empty();
+        return autos.stream()
+                .filter(auto -> auto.getId().equals(id))
+                .findAny();
     }
 
     @Override
@@ -40,14 +35,15 @@ public class AutoRepository implements CrudRepository<Auto> {
     }
 
     @Override
-    public boolean save(Auto savedAuto) {
-        if (savedAuto == null) {
+    public boolean save(Auto auto) {
+        if (auto == null) {
             throw new IllegalArgumentException("Auto must not be null");
         }
-        if (savedAuto.getPrice().equals(BigDecimal.ZERO)) {
-            savedAuto.setPrice(BigDecimal.valueOf(-1));
+        if (auto.getPrice().equals(BigDecimal.ZERO)) {
+            auto.setPrice(BigDecimal.valueOf(-1));
         }
-        return autos.add(savedAuto);
+        autos.add(auto);
+        return true;
     }
 
     @Override
@@ -59,24 +55,11 @@ public class AutoRepository implements CrudRepository<Auto> {
     }
 
     @Override
-    public boolean update(Auto auto) {
-        final Auto founded = getById(auto.getId());
-        if (founded != null) {
-            AutoCopy.copy(auto, founded);
-            return true;
-        }
-        return false;
+    public void update(Auto auto) {
+        Optional<Auto> optionalAuto = findById(auto.getId());
+        optionalAuto.ifPresentOrElse(founded -> AutoCopy.copy(auto, founded),
+                () -> save(auto));
     }
-
-    public boolean updateByBodyType(String bodyType, Auto copyFrom) {
-        for (Auto auto : autos) {
-            if (auto.getBodyType().equals(bodyType)) {
-                AutoCopy.copy(copyFrom, auto);
-            }
-        }
-        return true;
-    }
-
 
     @Override
     public boolean deleteById(String id) {
@@ -86,6 +69,10 @@ public class AutoRepository implements CrudRepository<Auto> {
     @Override
     public boolean delete(Auto auto) {
         return autos.remove(auto);
+    }
+
+    public void resetForTest() {
+        autos.clear();
     }
 
     private static class AutoCopy {

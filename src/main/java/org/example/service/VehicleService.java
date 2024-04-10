@@ -1,41 +1,48 @@
 package org.example.service;
 
-import org.example.model.*;
+import org.example.model.FuelType;
+import org.example.model.Manufacturer;
+import org.example.model.RacingTires;
+import org.example.model.Vehicle;
 import org.example.reprository.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public abstract class VehicleService<T extends Vehicle> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VehicleService.class);
     protected static final Random RANDOM = new Random();
+    private static final Logger LOGGER = LoggerFactory.getLogger(VehicleService.class);
     protected final CrudRepository<T> repository;
 
     protected VehicleService(CrudRepository<T> repository) {
         this.repository = repository;
     }
 
-    public List<T> createAndSaveAutos(int count) {
+    protected static BigDecimal roundValue(BigDecimal value) {
+        return value.setScale(3, RoundingMode.HALF_UP);
+    }
+
+    public List<T> createAndSaveVehicles(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("count can't be less than 0");
+        }
         List<T> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             final T vehicle = create();
             result.add(vehicle);
             repository.save(vehicle);
-            LOGGER.debug("Created vehicle {}", vehicle.getId());
+            LOGGER.info("Created vehicle {}", vehicle.getId());
         }
         return result;
     }
 
     protected abstract T create();
 
-    public T findOneById(String id) {
-        return repository.getById(Objects.requireNonNullElse(id, ""));
+    public Optional<T> findOneById(String id) {
+        return repository.findById(Objects.requireNonNullElse(id, ""));
     }
 
     protected Manufacturer getRandomManufacturer() {
@@ -44,14 +51,20 @@ public abstract class VehicleService<T extends Vehicle> {
         return values[index];
     }
 
-    public boolean update(T vehicle) {
+    protected RacingTires getRandomRacingTires() {
+        final RacingTires[] values = RacingTires.values();
+        final int index = RANDOM.nextInt(values.length);
+        return values[index];
+    }
+
+    public void update(T vehicle) {
         if (vehicle.getPrice().equals(BigDecimal.ZERO)) {
             vehicle.setPrice(BigDecimal.valueOf(-1));
         }
         if (vehicle.getManufacturer() == null) {
             throw new IllegalArgumentException("Vehicle cant be null");
         }
-        return repository.update(vehicle);
+        repository.update(vehicle);
     }
 
     public boolean deleteById(String vehicle) {
@@ -64,17 +77,12 @@ public abstract class VehicleService<T extends Vehicle> {
         return repository.delete(vehicle);
     }
 
-
-    public boolean save(List<T> savedVehicles) {
+    public boolean saveAll(List<T> savedVehicles) {
         return repository.saveAll(savedVehicles);
     }
 
     public boolean save(T savedVehicle) {
         return repository.save(savedVehicle);
-    }
-
-    protected static BigDecimal roundValue(BigDecimal value) {
-        return value.setScale(3, RoundingMode.HALF_UP);
     }
 
     protected double generateRandomValue(double min, double max) {
@@ -89,15 +97,11 @@ public abstract class VehicleService<T extends Vehicle> {
         };
     }
 
-    protected RacingTires getRandomRacingTires() {
-        final RacingTires[] values = RacingTires.values();
-        final int index = RANDOM.nextInt(values.length);
-        return values[index];
-    }
 
     public void printAll() {
         for (T vehicle : repository.getAll()) {
             System.out.println(vehicle);
         }
     }
+
 }

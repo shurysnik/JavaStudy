@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+
 @Getter
 @Setter
 public class SportCar extends Vehicle {
@@ -12,8 +13,8 @@ public class SportCar extends Vehicle {
     private int year;
     private Color color;
 
-    public SportCar(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, BigDecimal speed, int year, Color color,int count ) {
-        super(model, price, manufacturer, racingTires,count);
+    public SportCar(String model, BigDecimal price, Manufacturer manufacturer, RacingTires racingTires, BigDecimal speed, int year, Color color, int count) {
+        super(model, price, manufacturer, racingTires, count, VehicleType.SPORT);
         this.speed = speed;
         this.year = year;
         this.color = color;
