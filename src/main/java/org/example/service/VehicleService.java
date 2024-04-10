@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.function.Predicate;
 
 public abstract class VehicleService<T extends Vehicle> {
     protected static final Random RANDOM = new Random();
