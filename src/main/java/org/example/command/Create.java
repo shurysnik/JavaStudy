@@ -11,5 +11,4 @@ public class Create implements Command {
     public void execute() {
         GARAGE_SERVICE.add(UserInputUtil.getVehicle());
     }
-
 }

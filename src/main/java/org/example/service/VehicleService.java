@@ -10,10 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Predicate;
 
 public abstract class VehicleService<T extends Vehicle> {
     protected static final Random RANDOM = new Random();
@@ -28,7 +26,10 @@ public abstract class VehicleService<T extends Vehicle> {
         return value.setScale(3, RoundingMode.HALF_UP);
     }
 
-    public List<T> createAndSaveAutos(int count) {
+    public List<T> createAndSaveVehicles(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("count can't be less than 0");
+        }
         List<T> result = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             final T vehicle = create();
@@ -41,8 +42,8 @@ public abstract class VehicleService<T extends Vehicle> {
 
     protected abstract T create();
 
-    public T findOneById(String id) {
-        return repository.getById(Objects.requireNonNullElse(id, ""));
+    public Optional<T> findOneById(String id) {
+        return repository.findById(Objects.requireNonNullElse(id, ""));
     }
 
     protected Manufacturer getRandomManufacturer() {
@@ -51,14 +52,20 @@ public abstract class VehicleService<T extends Vehicle> {
         return values[index];
     }
 
-    public boolean update(T vehicle) {
+    protected RacingTires getRandomRacingTires() {
+        final RacingTires[] values = RacingTires.values();
+        final int index = RANDOM.nextInt(values.length);
+        return values[index];
+    }
+
+    public void update(T vehicle) {
         if (vehicle.getPrice().equals(BigDecimal.ZERO)) {
             vehicle.setPrice(BigDecimal.valueOf(-1));
         }
         if (vehicle.getManufacturer() == null) {
             throw new IllegalArgumentException("Vehicle cant be null");
         }
-        return repository.update(vehicle);
+        repository.update(vehicle);
     }
 
     public boolean deleteById(String vehicle) {
@@ -91,15 +98,11 @@ public abstract class VehicleService<T extends Vehicle> {
         };
     }
 
-    protected RacingTires getRandomRacingTires() {
-        final RacingTires[] values = RacingTires.values();
-        final int index = RANDOM.nextInt(values.length);
-        return values[index];
-    }
 
     public void printAll() {
         for (T vehicle : repository.getAll()) {
             System.out.println(vehicle);
         }
     }
+
 }

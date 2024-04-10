@@ -6,7 +6,7 @@ import org.example.service.AutoService;
 import org.example.service.CivilCarService;
 import org.example.service.SportCarService;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,7 +27,9 @@ public class UserInputUtil {
 
     public static Vehicle getVehicle() {
         final VehicleType[] values = VehicleType.values();
-        List<String> names = getNamesVehicleType(values);
+        final List<String> names = Arrays.stream(values)
+                .map(VehicleType::name)
+                .toList();
         int userInput = UserInputUtil.getUserInput("What do you want to create :", names);
 
         return switch (values[userInput]) {
@@ -51,11 +53,4 @@ public class UserInputUtil {
         return userInput;
     }
 
-    private static List<String> getNamesVehicleType(VehicleType[] values) {
-        final List<String> names = new ArrayList<>(values.length);
-        for (VehicleType type : values) {
-            names.add(type.name());
-        }
-        return names;
-    }
 }

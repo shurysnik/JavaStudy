@@ -15,6 +15,7 @@ public class SportCarService extends VehicleService<SportCar> {
     BigDecimal randomSpeed = roundValue(generateRandomValues(0, 508.73));
     int randomYearValue = generateRandomInt(1901, 2023);
     int randomModel = generateRandomInt(0, 1000);
+
     private SportCarService(CrudRepository<SportCar> repository) {
         super(repository);
     }
@@ -44,7 +45,8 @@ public class SportCarService extends VehicleService<SportCar> {
                 getRandomRacingTires(),
                 randomSpeed,
                 randomYearValue,
-                getRandomColor(), 1);
+                getRandomColor(), 1)
+                ;
     }
 
     protected Color getRandomColor() {

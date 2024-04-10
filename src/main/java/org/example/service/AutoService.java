@@ -39,4 +39,6 @@ public class AutoService extends VehicleService<Auto> {
             System.out.printf("Auto %s has total sum %d%n", vehicle.getModel(), totalSum);
         });
     }
+
+
 }

@@ -15,7 +15,7 @@ public class MainComparator {
     public static void main(String[] args) {
 
         VehicleService<Auto> vehicleService = AutoService.getInstance();
-        List<Auto> savedAutos = vehicleService.createAndSaveAutos(500);
+        List<Auto> savedAutos = vehicleService.createAndSaveVehicles(500);
         Comparator<Auto> comparatorByPrice = Comparator.comparing(Vehicle::getPrice);
         Comparator<Auto> comparatorByModel = Comparator.comparing(Vehicle::getModel);
         Comparator<Auto> comparatorByCount = (o1, o2) -> Integer.compare(o2.getCount(), o1.getCount());
@@ -25,6 +25,7 @@ public class MainComparator {
                 .thenComparing(comparatorByCount);
         Set<Auto> uniqueAutos = new TreeSet<>(comparator);
         uniqueAutos.addAll(savedAutos);
+
 
 
     }
